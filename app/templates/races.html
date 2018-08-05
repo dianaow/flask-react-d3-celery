@@ -1,0 +1,15 @@
+<!doctype html>
+<title>Hello from Flask</title>
+
+<b>{{ races_from_db }}</b>  
+
+{% for r in races_from_db %}
+   <div class="large-4 small-4 columns">
+       <ul class="pricing-table">
+           {% if r.raceId %}<li>{{ r.raceId }}</li>{% endif %}
+           {% if r.season %}<li>${{ r.season }}</li>{% endif %}
+           {% if r.raceName %}<li>{{ product.raceName }}</li>{% endif %}
+           {% if r.date %}<li>{{ r.date }}</li>{% endif %}
+       </ul>
+   </div>
+{% endfor %}
