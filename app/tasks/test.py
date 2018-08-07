@@ -1,22 +1,23 @@
-import celery
 from celery.task.base import periodic_task
 import requests
 import json
 import pandas as pd
 import datetime
-from app.models import Race
-from app import db
+from app.models import Race, db
 
-@periodic_task(run_every=datetime.timedelta(seconds=300), bind=True)
+@periodic_task(run_every=datetime.timedelta(seconds=300))
 def periodic_run_get_manifest():
     seasons = [2018]
     races_round = range(1,4)
     df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races_round)
-    races = df_races.to_json(orient='records')
-    r = Race(races)
-    db.session.add(r)
-    db.session.commit()
-    #print(self.AsyncResult(self.request.id).state)
+    for idx,row in df_races.iterrows():
+        r = Race()
+        r.raceId = df_races.loc[idx,"raceId"]
+        r.url = df_races.loc[idx,"url"]
+        r.season = df_races.loc[idx,"season"]
+        r.raceName = df_races.loc[idx,"raceName"]
+        db.session.add(r)
+        db.session.commit()
 
 def extract_to_df_race(results_type, seasons, races_round):
 
@@ -195,3 +196,6 @@ def transform_laptimes(dictionary, s, r):
     df_lapTimes = pd.merge(df_lapTimes, df_races[['raceName', 'season', 'round']], on=['season', 'round'], how='left')
 
     return df_lapTimes
+
+
+
