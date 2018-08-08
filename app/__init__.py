@@ -1,19 +1,23 @@
 from flask import Flask, render_template
 from flask_sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
 from celery import Celery
 import celeryconfig
-from tasks.test import extract_to_df_race
+
+db = SQLAlchemy()
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object('config')
-    from models import Race, db
     db.init_app(app)
+   
     with app.app_context():
         db.create_all()
     return app
-
-f1 = create_app()
+    
+from app import models
+app = create_app()
+migrate = Migrate(app, db)
 
 def make_celery(app):
     # create context tasks in celery
@@ -35,4 +39,4 @@ def make_celery(app):
 
     return celery
 
-celery = make_celery(f1)
+celery = make_celery(app)

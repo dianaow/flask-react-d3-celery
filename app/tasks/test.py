@@ -3,21 +3,27 @@ import requests
 import json
 import pandas as pd
 import datetime
+from app import app
 from app.models import Race, db
 
 @periodic_task(run_every=datetime.timedelta(seconds=300))
 def periodic_run_get_manifest():
-    seasons = [2018]
-    races_round = range(1,4)
-    df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races_round)
-    for idx,row in df_races.iterrows():
-        r = Race()
-        r.raceId = df_races.loc[idx,"raceId"]
-        r.url = df_races.loc[idx,"url"]
-        r.season = df_races.loc[idx,"season"]
-        r.raceName = df_races.loc[idx,"raceName"]
-        db.session.add(r)
-        db.session.commit()
+    with app.app_context():
+        seasons = [2018]
+        races_round = range(1,4)
+        df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races_round)
+        for idx,row in df_races.iterrows():
+            r = Race()
+            r.raceId = df_races.loc[idx,"raceId"]
+            r.url = df_races.loc[idx,"url"]
+            r.season = df_races.loc[idx,"season"]
+            r.raceName = df_races.loc[idx,"raceName"]
+            db.session.add(r)
+            try:
+                db.session.commit()
+            except Exception as e:
+                db.session.rollback()
+                print(str(e))
 
 def extract_to_df_race(results_type, seasons, races_round):
 

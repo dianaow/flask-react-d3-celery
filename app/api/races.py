@@ -1,7 +1,8 @@
-from app import f1
-from models import db
+from flask import render_template
+from app import app, db
+from models import Race
 
-@f1.route('/data/races/all', methods=['GET'])
+@app.route('/data/races/all', methods=['GET'])
 def race():
     races_from_db = db.session.query(Race.raceName).all()
     return render_template('races.html', races_from_db=races_from_db)
