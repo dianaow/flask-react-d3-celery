@@ -1,3 +1,4 @@
 /redis-3.2.1
 /venv
+/migrations
 *.pyc
