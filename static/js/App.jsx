@@ -13,7 +13,7 @@ export default class App extends React.Component {
                 </svg>
               </Col>
               <Col md={4}>
-                <h1 class='header-contents'> React + D3 Test </h1>
+                <h1 class='header-content'> React + D3 Test </h1>
               </Col>
             </Row>);
   }

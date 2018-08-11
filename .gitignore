@@ -1,4 +1,7 @@
 /redis-3.2.1
 /venv
 /migrations
+dist/
+node_modules/
+npm-debug.log
 *.pyc

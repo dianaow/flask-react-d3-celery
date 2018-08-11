@@ -8,7 +8,7 @@ import os
 db = SQLAlchemy()
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, static_folder="../static/dist", template_folder="../static")
     app.config.from_object('config')
     db.init_app(app)
    
@@ -42,7 +42,11 @@ def make_celery(app):
 
 celery = make_celery(app)
 
-@app.route('/', methods=['GET'])
+@app.route("/")
+def index():
+    return render_template("index.html")
+
+@app.route('/data/races/all', methods=['GET'])
 def race():
     races_from_db = db.session.query(models.Race).all()
     return render_template('races.html', races_from_db=races_from_db)
