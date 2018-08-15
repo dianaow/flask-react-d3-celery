@@ -4,6 +4,7 @@ from flask_migrate import Migrate
 from celery import Celery
 import celeryconfig
 import os
+import json
 
 db = SQLAlchemy()
 
@@ -48,9 +49,8 @@ def index():
 
 @app.route('/data/races/all', methods=['GET'])
 def race():
-    races_from_db = db.session.query(models.Race).all()
-    return render_template('races.html', races_from_db=races_from_db)
-
+    races = db.session.query(models.Race).all()
+    return json.dumps(models.Race.serialize_list(races))
 
 app.run(host=os.getenv('IP', '0.0.0.0'), port=int(os.getenv('PORT', 8080)))
 if __name__ == '__main__':
