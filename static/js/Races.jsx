@@ -15,7 +15,7 @@ class Races extends Component {
 
     componentDidMount(){
       fetch(RACE_SERVICE_URL) 
-        .then(results => this.processResults(results.json())) 
+        .then(results => results.json()) 
         .then(data => this.setState({ races: data }));
     }
 
@@ -26,20 +26,24 @@ class Races extends Component {
       const raceName_arr = data.map(d => d.raceName);
       const url_arr = data.map(d => d.url);
       const data_mapped = {'raceId': raceId_arr, 'season': season_arr, 'raceName': raceName_arr, 'url': url_arr};
+
+
       return data_mapped;
-  
+      // this.setState({
+      //   races: data_mapped 
+      // }, () => console.log(this.state))
+        
     }
 
     render() {
         const title = 'Race Tracks';
-        const races_mapped = this.processResults(this.state.races);
-        return (
-          <div>
-            <h2>{title}</h2>
-            <RacesViz data= {races_mapped.raceId} />
-          </div>
 
-        );
+         const processedData = this.processResults(this.state.races);
+           
+        return(  <div>
+                  <h2>{title}</h2>
+                  <RacesViz data= {processedData} />
+                </div>);
     }
 }
 
