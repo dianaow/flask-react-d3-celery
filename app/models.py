@@ -14,9 +14,9 @@ class Serializer(object):
 class Race(db.Model, Serializer):
     __tablename__ = 'races'
     raceId = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(50), unique=True)
+    url = db.Column(db.String(500), unique=True)
     season = db.Column(db.Integer)
-    raceName = db.Column(db.String(50))
+    raceName = db.Column(db.String(120))
 
     def __init__(self, **kwargs):
         super(Race, self).__init__(**kwargs)

@@ -2,7 +2,7 @@ import React,{ Component } from 'react';
 import fetch from 'isomorphic-fetch';
 import RacesViz from './RacesViz';
 
-const RACE_SERVICE_URL = 'https://celery-scheduler-dianaow.c9users.io/data/races/all';
+const RACE_SERVICE_URL = 'https://]ocalhost:8080/data/races/all';
 
 class Races extends Component {
     
