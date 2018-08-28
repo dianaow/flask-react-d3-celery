@@ -1,3 +1,4 @@
+.env
 env.list
 redis*/
 /venv

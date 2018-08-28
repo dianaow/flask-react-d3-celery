@@ -24,17 +24,22 @@ RUN \
   pip install --upgrade virtualenv && \
   virtualenv -p /usr/bin/python2.7 /home/ubuntu/.virtualenvs/celery_env
 
-COPY . /home/ubuntu/celery-scheduler
-
 WORKDIR /home/ubuntu/celery-scheduler
 
+ADD requirements.txt /home/ubuntu/celery-scheduler/
+
 # Install app requirements
-RUN \
-  . /home/ubuntu/.virtualenvs/celery_env/bin/activate && \
-  pip install -r requirements.txt && \
-  . scripts/install_redis.sh
+ENV PATH=/home/ubuntu/.virtualenvs/bin:$PATH
+RUN pip install -r requirements.txt
+
+COPY . /home/ubuntu/celery-scheduler
 
 # Copy supervisor configs
 RUN \
   cp configs/supervisord.conf /etc/supervisor/supervisord.conf && \
   cp configs/conf.d/*.conf /etc/supervisor/conf.d/
+
+ENV FLASK_APP /home/ubuntu/celery-scheduler/app/__init__.py
+ENV FLASK_DEBUG 1
+
+CMD ["flask", "run", "--host", "0.0.0.0"]

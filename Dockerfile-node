@@ -1,0 +1,13 @@
+# base image
+FROM node:8.6.0
+
+# set working directory
+WORKDIR /home/ubuntu/celery-scheduler
+ENV PATH /home/ubuntu/celery-scheduler/node_modules/.bin:$PATH
+
+# install and cache app dependencies
+COPY package.json /home/ubuntu/celery-scheduler/package.json
+RUN npm install --silent
+
+# start app
+CMD ["npm", "run", "build"]
