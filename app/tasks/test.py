@@ -1,7 +1,6 @@
 from celery.task.base import periodic_task
 from celery.schedules import crontab
 from app import app
-from app.models import Race, Schedule, db
 from app.utils  import *
 from os import environ
 import os
@@ -41,6 +40,3 @@ def periodic_run_get_manifest(self):
             except Exception as e:
                 db.session.rollback()
                 print(str(e))
-
-    
-    

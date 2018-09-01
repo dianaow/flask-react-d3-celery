@@ -29,6 +29,22 @@
     	"6": {
     		"season": 2018,
     		"roundID": 6
-    	}
+    	},
+        "7": {
+            "season": 2018,
+            "roundID": 7
+        },
+        "8": {
+            "season": 2018,
+            "roundID": 8
+        },
+        "9": {
+            "season": 2018,
+            "roundID": 9
+        },
+        "10": {
+            "season": 2018,
+            "roundID": 10
+        }
     }
 }

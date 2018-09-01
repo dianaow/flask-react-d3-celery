@@ -25,9 +25,12 @@ class BarChart1 extends Component {
     const data = this.props.data;
     console.log(data);
 
-    x.domain(data.map(d => d.raceName));
-    y.domain([0, max(data, d => d.raceId)]);
+    x.domain(data.map(d => d.race_name));
+    y.domain([0, max(data, d => d.id)]);
     
+    console.log(x);
+    console.log(y);
+
     return (
     <svg width={svgWidth} height={svgHeight}>
       <g transform={`translate(${margin.left}, ${margin.top})`}>
@@ -44,12 +47,12 @@ class BarChart1 extends Component {
         </g>
         {data.map(d => (
           <rect
-            key={d.raceName}
+            key={d.race_name}
             className="bar"
-            x={x(d.raceName)}
-            y={y(d.raceId)}
+            x={x(d.race_name)}
+            y={y(d.id)}
             width={x.bandwidth()}
-            height={height - y(d.raceId)}
+            height={height - y(d.id)}
           />
         ))}
       </g>

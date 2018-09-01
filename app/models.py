@@ -1,34 +1,54 @@
-from flask import Flask
-from app import db
+from app.extensions import db
 from sqlalchemy.inspection import inspect
 
-class Serializer(object):
+
+class MethodsMixin(object):
+    """
+    This class mixes in some common Class table functions like
+    delete and save
+    """
+    def save(self):
+        db.session.add(self)
+        db.session.commit()
+        return self.id
+
+    def update(self):
+        db.session.commit()
+        return self.id
+
+    def delete(self):
+        ret = self.id
+        db.session.delete(self)
+        db.session.commit()
+        return ret
 
     def serialize(self):
         return {c: getattr(self, c) for c in inspect(self).attrs.keys()}
 
-    @staticmethod
-    def serialize_list(l):
-        return [m.serialize() for m in l]
+    def serialize_list(self, lis):
+        return [m.serialize() for m in lis]
+
         
-class Race(db.Model, Serializer):
+class Race(db.Model, MethodsMixin):
     __tablename__ = 'races'
-    raceId = db.Column(db.Integer, primary_key=True)
-    url = db.Column(db.String(500), unique=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    url = db.Column(db.String(500))
     season = db.Column(db.Integer)
-    raceName = db.Column(db.String(120))
+    race_name = db.Column(db.String(120))
 
     def __init__(self, **kwargs):
-        super(Race, self).__init__(**kwargs)
-        
-    def serialize(self):
-        d = Serializer.serialize(self)
-        return d
+        keys = ['id', 'url', 'season', 'race_name']
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
 
-class Schedule(db.Model):
+
+class Schedule(db.Model, MethodsMixin):
     __tablename__ = 'schedule'
-    scheduleId = db.Column(db.Integer, primary_key=True, unique=True) 
-    taskId = db.Column(db.String(50))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    task_id = db.Column(db.String(50))
     
     def __init__(self, **kwargs):
-        super(Schedule, self).__init__(**kwargs)
+        keys = ["task_id"]
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
+

@@ -1,8 +1,15 @@
-from flask import render_template
-from app import app, db
-from models import Race
+from flask import json, jsonify, Blueprint
+from app.extensions import db
+from app.models import Race
 
-@app.route('/', methods=['GET'])
+race_blueprint = Blueprint('races', __name__)
+
+@race_blueprint.route('/api/races', methods=['GET'])
 def race():
-    races_from_db = db.session.query(Race.raceName).all()
-    return render_template('races.html', races_from_db=races_from_db)
+    races = db.session.query(Race).all()
+    results = []
+
+    for race in races:
+        results.append(race.serialize())
+
+    return jsonify({"data": results})

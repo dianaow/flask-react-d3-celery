@@ -6,12 +6,20 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    ports:
-      - "5000:5000"
     volumes:
       - .:/app
-    #command: flask run --host 0.0.0.0 --port 5000
     depends_on:
+      - redis
+      - postgres
+  
+  celery:
+    build: .
+    command: celery -A app.tasks worker -B -l info
+    user: nobody
+    volumes:
+      - .:/app
+    depends_on:
+      - app
       - redis
       - postgres
 
@@ -22,7 +30,6 @@ services:
       - POSTGRES_USER=${RDS_USERNAME}
       - POSTGRES_PASSWORD=${RDS_PASSWORD}
       - POSTGRES_HOSTNAME=${RDS_HOSTNAME}
-      - POSTGRES_PORT=${RDS_PORT}
       - POSTGRES_DB=${RDS_DB_NAME}
     ports:
       - "5432:5432"
@@ -31,7 +38,7 @@ services:
     image: redis
     command: redis-server
     ports:
-      - '6379:6379'
+      - "6379:6379"
 
   client:
     build:
@@ -44,7 +51,7 @@ services:
       - 3007:3000
     environment:
       - NODE_ENV=development
-      - REACT_APP_RACES_SERVICE_URL='https://]ocalhost:8080/data/races/all'
+      - REACT_APP_RACES_SERVICE_URL=https://]ocalhost:5000/api/races
     depends_on:
       - app
 
