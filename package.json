@@ -4,10 +4,10 @@
   "description": "Visualizing and Predicting Formula One",
   "main": "index.js",
   "scripts": {
-    "build": "webpack -p --progress --config webpack.config.js",
-    "dev-build": "webpack --progress -d --config webpack.config.js",
+    "build": "webpack --mode production -p --progress --config webpack.config.js",
+    "dev-build": "webpack --mode development --progress -d --config webpack.config.dev.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "webpack --progress -d --config webpack.config.js --watch"
+    "watch": "webpack --mode development --progress -d --config webpack.config.dev.js --watch"
   },
   "keywords": [
     "fullstack",
@@ -42,6 +42,7 @@
     "d3-shape": "^1.2.0",
     "d3-svg-legend": "^2.25.6",
     "d3-transition": "^1.1.1",
+    "dotenv": "^6.0.0",
     "file-loader": "^1.1.11",
     "jquery": "^3.3.1",
     "mini-css-extract-plugin": "^0.4.1",

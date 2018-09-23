@@ -4,10 +4,10 @@ from app.utils import *
 from app.tasks import celery, db_session
 from app.tasks.models import Schedule, Race, commit_db
 from sqlalchemy import desc
+from app.lib.log import *
 
 with open(os.path.join("./app", 'params.json'), "r") as f:
   params = json.load(f)
-
 
 @celery.task(name="get_manifest")
 def run_get_manifest():
@@ -26,12 +26,7 @@ def run_get_manifest():
     # print(rowId, params['schedule'][rowId]['season'], params['schedule'][rowId]['roundID'])
 
     df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races)
-    for idx, row in df_races.iterrows():
-        url = df_races.loc[idx, "url"]
-        season = df_races.loc[idx, "season"]
-        race_name = df_races.loc[idx, "raceName"]
+    save_races_to_db(df_races, db_session)
+    save_results_to_db(df_results, db_session)
 
-        r = Race(url, season, race_name)
-        db_session.add(r)
-        commit_db()
-    # print("OK")
+

@@ -1,6 +1,7 @@
 import React,{ Component } from 'react';
-import fetch from 'isomorphic-fetch';
 import BarChart1 from './BarChart1'
+
+const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 
 class Races extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class Races extends Component {
   }
 
   componentDidMount(){
-    fetch('http://localhost:8080/api/races') 
+    fetch(RACES_SERVICE_URL)
       .then(results => results.json()) 
       .then(data => this.setState({ races: data.data }));
     

@@ -2,6 +2,14 @@ import requests
 import json
 import pandas as pd
 import datetime
+import xmltodict
+
+
+def get_sec(time_str):
+
+    time_str = time_str[0:4] + ":" + time_str[5:]
+    m, s, ms = time_str.split(':')
+    return int(m) * 60 + int(s) + int(ms)/1000
 
 def extract_to_df_race(results_type, seasons, races_round):
 
@@ -19,9 +27,8 @@ def extract_to_df_race(results_type, seasons, races_round):
             for r in races_round:
                 try:
                     response = requests.get("http://ergast.com/api/f1/" + str(s) + "/" + str(r) + "/" + "laps?limit=2000.json")
-                    #print response.status_code
                     dictionary = response.content # Store content of the response (the data the server returned)
-                    dictionary = json.loads(dictionary) # Converts string to a list
+                    dictionary = xmltodict.parse(dictionary, attr_prefix='')
                     laptimes = transform_laptimes(dictionary, s, r) 
                     df_lapTimes = pd.concat([df_lapTimes, laptimes])
                 except:
@@ -47,7 +54,7 @@ def extract_to_df_race(results_type, seasons, races_round):
                 if results_type == 'qualifying': 
                     qual = transform_qualifying(dictionary, s, r) 
                     df_qual = pd.concat([df_qual, qual])
-                    
+
                 if results_type == 'pitstops': 
                     pS = transform_pitstops(dictionary, s, r) 
                     df_pitStops = pd.concat([df_pitStops, pS])
@@ -57,28 +64,27 @@ def extract_to_df_race(results_type, seasons, races_round):
         
     if results_type == 'results': 
         constructors.drop_duplicates(keep='first', inplace=True)
-        #constructors = constructors.reset_index(drop=True).reset_index().rename(columns={'index': 'constructorId'})
-        #constructors['constructorId'] = constructors['constructorId'] + 1
+        constructors = constructors.reset_index(drop=True)
 
         df_drivers.drop_duplicates(keep='first', inplace=True)
-        #df_drivers = df_drivers.reset_index(drop=True).reset_index().rename(columns={'index': 'driverId'})
-        #df_drivers['driverId'] = df_drivers['driverId'] + 1
+        df_drivers = df_drivers.reset_index(drop=True)
 
-        #df_circuits = df_circuits.reset_index(drop=True).reset_index().rename(columns={'index': 'circuitId'})
-        #df_circuits['circuitId'] = df_circuits['circuitId'] + 1
-        
-        #df_races = df_races.reset_index(drop=True).reset_index().rename(columns={'index': 'raceId'})
-        #df_races['raceId'] = df_races['raceId'] + 1
-        
-        #df_results = df_results.reset_index(drop=True).reset_index().rename(columns={'index': 'resultId'})
-        #df_results['resultId'] = df_results['resultId'] +1
+        df_circuits = df_circuits.reset_index(drop=True)
+        df_races = df_races.reset_index(drop=True)
+        df_results = df_results.reset_index(drop=True)
+
+        df_races["dateTime"] = pd.to_datetime(df_races["date"])
 
         return df_races, df_circuits, constructors, df_drivers, df_results
         
     if results_type == 'qualifying':
         df_qual = df_qual.reset_index(drop=True).reset_index().rename(columns={'index': 'qualifyId'})
         df_qual['qualifyId'] = df_qual['qualifyId'] + 1
-        
+        df_qual.fillna("0:00:00", inplace=True)
+        df_qual['Q1'] = df_qual['Q1'].map(lambda x: get_sec(x))
+        df_qual['Q2'] = df_qual['Q2'].map(lambda x: get_sec(x))
+        df_qual['Q3'] = df_qual['Q3'].map(lambda x: get_sec(x))
+
         return  df_qual
 
     if results_type == 'pitstops':

@@ -1,11 +1,10 @@
 from os import environ
 import os
 
-REDIS_HOST = "0.0.0.0"
+REDIS_HOST = environ.get('REDIS_HOST') if environ.get('REDIS_HOST') else "0.0.0.0"
 REDIS_PORT = 6379
 broker_url = "redis://{host}:{port}/0".format(host=REDIS_HOST, port=str(REDIS_PORT))
 result_backend = broker_url
-
 
 RDS_USERNAME = environ.get('RDS_USERNAME')
 RDS_PASSWORD = environ.get('RDS_PASSWORD')

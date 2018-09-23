@@ -22,7 +22,6 @@ enum34==1.1.6
 Flask==0.12.2
 Flask-Migrate==2.2.1
 Flask-SQLAlchemy==2.3.2
-functools32==3.2.3.post2
 idna==2.6
 ipaddress==1.0.22
 itsdangerous==0.24
@@ -47,7 +46,6 @@ requests==2.18.4
 semantic-version==2.5.0
 six==1.11.0
 SQLAlchemy==1.2.10
-supervisor==3.3.3
 tabulate==0.7.5
 termcolor==1.1.0
 texttable==0.9.1
@@ -56,3 +54,4 @@ vine==1.1.4
 wcwidth==0.1.7
 websocket-client==0.51.0
 Werkzeug==0.14.1
+xmltodict==0.11.0

@@ -1,2 +1,12 @@
-node_modules
+.ssh
+.ssh.pub
 .env
+redis*/
+/venv
+/migrations
+dist/
+node_modules/
+npm-debug.log
+*.pyc
+__pycache__
+.DS_Store

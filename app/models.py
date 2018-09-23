@@ -1,6 +1,16 @@
 from app.extensions import db
 from sqlalchemy.inspection import inspect
+from psycopg2.extensions import register_adapter, AsIs
+import numpy as np
+def adapt_numpy_int64(numpy_int64):
+    """ Adapting numpy.int64 type to SQL-conform int type using psycopg extension, see [1]_ for more info.
+     References
+    ----------
+    .. [1] http://initd.org/psycopg/docs/advanced.html#adapting-new-python-types-to-sql-syntax
+    """
+    return AsIs(numpy_int64)
 
+register_adapter(np.int64, adapt_numpy_int64) 
 
 class MethodsMixin(object):
     """
@@ -32,15 +42,32 @@ class MethodsMixin(object):
 class Race(db.Model, MethodsMixin):
     __tablename__ = 'races'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    url = db.Column(db.String(500))
     season = db.Column(db.Integer)
-    race_name = db.Column(db.String(120))
+    raceName = db.Column(db.String(120))
+    roundId = db.Column(db.Integer)
 
     def __init__(self, **kwargs):
-        keys = ['id', 'url', 'season', 'race_name']
+        keys = ['id', 'season', 'raceName', 'roundId']
         for key in keys:
             setattr(self, key, kwargs.get(key))
 
+class Results(db.Model, MethodsMixin):
+    __tablename__ = 'results'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    constructorRef = db.Column(db.String(120))
+    driverRef = db.Column(db.String(120))
+    season = db.Column(db.Integer)
+    roundId = db.Column(db.Integer)
+    grid = db.Column(db.Integer)
+    laps = db.Column(db.Integer)
+    position = db.Column(db.Integer)
+    status = db.Column(db.String(120))
+    raceName = db.Column(db.String(120))
+
+    def __init__(self, **kwargs):
+        keys = ['id', 'constructorRef', 'driverRef', 'season', 'roundId', 'grid', 'laps',  'position', 'status', 'raceName']
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
 
 class Schedule(db.Model, MethodsMixin):
     __tablename__ = 'schedule'

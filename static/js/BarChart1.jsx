@@ -25,7 +25,7 @@ class BarChart1 extends Component {
     const data = this.props.data;
     console.log(data);
 
-    x.domain(data.map(d => d.race_name));
+    x.domain(data.map(d => d.raceName));
     y.domain([0, max(data, d => d.id)]);
     
     console.log(x);
@@ -47,9 +47,9 @@ class BarChart1 extends Component {
         </g>
         {data.map(d => (
           <rect
-            key={d.race_name}
+            key={d.raceName}
             className="bar"
-            x={x(d.race_name)}
+            x={x(d.raceName)}
             y={y(d.id)}
             width={x.bandwidth()}
             height={height - y(d.id)}

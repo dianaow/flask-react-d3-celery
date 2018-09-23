@@ -1,3 +1,6 @@
+Dockerrun.aws.json
+.ssh
+.ssh.pub
 .env
 env.list
 redis*/
@@ -7,6 +10,8 @@ dist/
 node_modules/
 npm-debug.log
 *.pyc
+__pycache__
+.DS_Store
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml

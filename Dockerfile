@@ -15,5 +15,3 @@ RUN pip install -r requirements.txt
 COPY . /home/ubuntu/celery-scheduler
 
 EXPOSE 5000
-
-CMD ["python", "flask_app.py", "--host", "0.0.0.0"]

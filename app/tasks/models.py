@@ -34,17 +34,42 @@ MyModel.query = db_session.query_property()
 class Race(MyModel):
     __tablename__ = "races"
     id = Column(Integer, primary_key=True)
-    url = Column(String(50))
     season = Column(Integer)
-    race_name = Column(String(50))
+    raceName = Column(String(50))
+    roundId = Column(Integer)
 
-    def __init__(self, url, season, race_name):
-        self.url = url
+    def __init__(self, season, raceName, roundId):
         self.season = season
-        self.race_name = race_name
+        self.raceName = raceName
+        self.roundId = roundId
 
         super(Race, self).__init__()
 
+class Results(MyModel):
+    __tablename__ = 'results'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    constructorRef = Column(String(120))
+    driverRef = Column(String(120))
+    season = Column(Integer)
+    roundId = Column(Integer)
+    grid = Column(Integer)
+    laps = Column(Integer)
+    position = Column(Integer)
+    status = Column(String(120))
+    raceName = Column(String(120))
+
+    def __init__(self, constructorRef, driverRef, season, roundId, grid, laps, position, status, raceName):
+        self.constructorRef = constructorRef
+        self.driverRef = driverRef
+        self.season = season
+        self.roundId = roundId
+        self.grid = grid
+        self.laps = laps
+        self.position = position
+        self.status = status
+        self.raceName = raceName
+
+        super(Results, self).__init__()
 
 class Schedule(MyModel):
     __tablename__ = 'schedule'

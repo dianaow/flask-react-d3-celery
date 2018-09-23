@@ -1,5 +1,17 @@
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const dotenv = require('dotenv').config({path: 'config/docker/production/.env'});
+
+// call dotenv and it will return an Object with a parsed key 
+const env = dotenv.parsed;
+
+// reduce it to a nice object, the same as before
+const envKeys = Object.keys(env).reduce((prev, next) => {
+prev[`process.env.${next}`] = JSON.stringify(env[next]);
+return prev;
+}, {});
+
+console.log(process.env.RACES_SERVICE_URL);
 
 const config = {
     entry:  __dirname + '/static/js/index.jsx',
@@ -31,7 +43,8 @@ const config = {
         new MiniCssExtractPlugin({
             path: __dirname + '/static/dist',
             filename: 'styles.css',
-        })
+        }),
+        new webpack.DefinePlugin(envKeys)
     ]
 };
 
