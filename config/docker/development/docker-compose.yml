@@ -1,0 +1,72 @@
+version: '2' 
+
+services:
+  app:
+    restart: always
+    build: 
+      context: ../../../
+      dockerfile: Dockerfile
+    environment:
+      - RDS_USERNAME=${RDS_USERNAME}
+      - RDS_PASSWORD=${RDS_PASSWORD}
+      - RDS_HOSTNAME=${RDS_HOSTNAME}
+      - RDS_DB_NAME=${RDS_DB_NAME}
+    ports:
+      - 5000:5000
+    volumes:
+      - ../../../:/app
+    depends_on:
+      - redis
+      - postgres
+    entrypoint: ["python", "flask_app.py"]
+
+  celery:
+    restart: always
+    build: ../../../
+    environment:
+      - RDS_USERNAME=${RDS_USERNAME}
+      - RDS_PASSWORD=${RDS_PASSWORD}
+      - RDS_HOSTNAME=${RDS_HOSTNAME}
+      - RDS_DB_NAME=${RDS_DB_NAME}
+      - REDIS_HOST=redis
+    command: celery -A app.tasks worker -B -l info
+    volumes:
+      - ../../../:/app
+    depends_on:
+      - app
+      - redis
+      - postgres
+
+  postgres:
+    restart: always
+    image: postgres:9.6
+    environment:
+      - POSTGRES_USER=${RDS_USERNAME}
+      - POSTGRES_PASSWORD=${RDS_PASSWORD}
+      - POSTGRES_HOSTNAME=${RDS_HOSTNAME}
+      - POSTGRES_DB=${RDS_DB_NAME}
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis
+    command: redis-server
+    ports:
+      - "6379:6379"
+
+  client:
+    build:
+      context: ../../../
+      dockerfile: Dockerfile-node
+    volumes:
+      - ../../../:/home/ubuntu/celery-scheduler/
+      - /home/ubuntu/celery-scheduler/node_modules
+    ports:
+      - 3007:3000
+    environment:
+      - NODE_ENV=development
+      - RACES_SERVICE_URL=${RACES_SERVICE_URL}
+    command: npm run dev-build
+    depends_on:
+      - app
+
