@@ -5,10 +5,23 @@ import datetime
 import xmltodict
 
 
+def get_sec_laps(time_str):
+
+    time_str = time_str[0:5] + ":" + time_str[6:]
+    m, s, ms = time_str.split(':')
+    return int(m) * 60 + int(s) + int(ms)/1000
+
 def get_sec(time_str):
 
     time_str = time_str[0:4] + ":" + time_str[5:]
-    m, s, ms = time_str.split(':')
+    
+    try:
+        m, s, ms = time_str.split(':')
+    except:
+        m = 0
+        s = 0
+        ms = 0
+        
     return int(m) * 60 + int(s) + int(ms)/1000
 
 def extract_to_df_race(results_type, seasons, races_round):
@@ -152,6 +165,7 @@ def transform_results(dictionary, s, r):
 def transform_qualifying(dictionary, s, r):
     
     df_races, df_circuit, df_constructor, df_driver, df_qual, df = helper(dictionary, s, r, col='QualifyingResults')
+    df_qual= pd.merge(df_qual, df_races[['raceName', 'season', 'round']], on=['season', 'round'], how='left')
     df_qual = pd.concat([df_qual, df[['Q1', 'Q2', 'Q3', 'number', 'position']]], axis=1)
     
     return df_qual
@@ -161,7 +175,8 @@ def transform_pitstops(dictionary, s, r):
     df_races, df_pitStops = helper(dictionary, s, r, col='PitStops')
     df_pitStops = pd.merge(df_pitStops, df_races[['raceName', 'season', 'round']], on=['season', 'round'], how='left')
     df_pitStops.rename(columns={'driverId':'driverRef'}, inplace=True)  
-    
+    df_pitStops['duration'] = df_pitStops['duration'].astype(float)
+
     return df_pitStops
 
 def transform_laptimes(dictionary, s, r):
@@ -177,12 +192,16 @@ def transform_laptimes(dictionary, s, r):
     
     df_lapTimes['season'] = s
     df_lapTimes['round'] = r
-    
+    df_lapTimes.rename(columns={"driverId":"driverRef"}, inplace=True)
+
     df_races = pd.DataFrame.from_dict(dictionary['MRData']['RaceTable']['Race'], orient='index').T
     df_races.drop(["LapsList", 'Circuit'], axis=1, inplace=True)
     df_races['round'] = df_races['round'].astype(int)
     df_races['season'] = df_races['season'].astype(int)
     df_races.rename(columns={"RaceName":"raceName"}, inplace=True)   
     df_lapTimes = pd.merge(df_lapTimes, df_races[['raceName', 'season', 'round']], on=['season', 'round'], how='left')
+
+    df_lapTimes.fillna("0:00:00", inplace=True)
+    df_lapTimes['time'] = df_lapTimes['time'].map(lambda x: get_sec(x))
 
     return df_lapTimes

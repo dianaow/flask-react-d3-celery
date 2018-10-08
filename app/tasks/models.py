@@ -1,5 +1,5 @@
 from .celery_app import db_session
-from sqlalchemy import Column, Integer, String, Text, DateTime, Boolean, func, or_, and_, case, desc
+from sqlalchemy import Column, Integer, Float, String, Text, DateTime, Boolean, func, or_, and_, case, desc
 from sqlalchemy.exc import DatabaseError
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -45,6 +45,7 @@ class Race(MyModel):
 
         super(Race, self).__init__()
 
+
 class Results(MyModel):
     __tablename__ = 'results'
     id = Column(Integer, primary_key=True, autoincrement=True)
@@ -70,6 +71,77 @@ class Results(MyModel):
         self.raceName = raceName
 
         super(Results, self).__init__()
+
+
+class Qualifying(MyModel):
+    __tablename__ = 'qualifying'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    driverRef = Column(String(120))
+    season = Column(Integer)
+    roundId = Column(Integer)
+    raceName = Column(String(120))
+    Q1 = Column(Float)
+    Q2 = Column(Float)
+    Q3 = Column(Float)
+    position = Column(Integer)
+
+    def __init__(self, driverRef, season, raceName, Q1, Q2, Q3, position):
+        self.driverRef = driverRef
+        self.season = season
+        self.raceName = raceName
+        self.Q1 = Q1
+        self.Q2 = Q2
+        self.Q3 = Q3
+        self.position = position
+
+        super(Qualifying, self).__init__()
+
+
+class LapTimes(MyModel):
+    __tablename__ = 'laptimes'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    driverRef = Column(String(120))
+    season = Column(Integer)
+    roundId = Column(Integer)
+    raceName = Column(String(120))
+    lap = Column(Integer)
+    time = Column(Float)
+    position = Column(Integer)
+
+    def __init__(self, driverRef, season, roundId, raceName, lap, time, position):
+        self.driverRef = driverRef
+        self.season = season
+        self.roundId = roundId
+        self.raceName = raceName
+        self.lap = lap
+        self.time = time
+        self.position = position
+
+        super(LapTimes, self).__init__()
+
+
+class PitStops(MyModel):
+    __tablename__ = 'pitstops'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    driverRef = Column(String(120))
+    season = Column(Integer)
+    roundId = Column(Integer)
+    raceName = Column(String(120))
+    lap = Column(Integer)
+    duration = Column(Float)
+    stop = Column(Integer)   
+
+    def __init__(self, driverRef, season, roundId, raceName, lap, duration, stop):
+        self.driverRef = driverRef
+        self.season = season
+        self.roundId = roundId
+        self.raceName = raceName
+        self.lap = lap
+        self.duration = duration
+        self.stop = stop
+
+        super(PitStops, self).__init__()
+
 
 class Schedule(MyModel):
     __tablename__ = 'schedule'

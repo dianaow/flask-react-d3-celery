@@ -25,10 +25,11 @@ except Exception as e:
 celery.conf.update(default_config)
 
 celery.conf.beat_schedule = {
-    'run_get_manifest': {
-        'task': 'get_manifest',
+    'run_get_scheduled_results': {
+        'task': 'get_scheduled_results',
         'schedule': crontab(minute="*"),
-        'args': (),
+        #'schedule': crontab(minute=0, hour=1, day_of_week="MON"),
+        'args': ()
     }
 }
 

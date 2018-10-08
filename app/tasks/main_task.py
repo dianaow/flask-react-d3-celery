@@ -2,18 +2,19 @@ import os
 import json
 from app.utils import *
 from app.tasks import celery, db_session
-from app.tasks.models import Schedule, Race, commit_db
+from app.tasks.models import Schedule, Race, Results, Qualifying, LapTimes, PitStops, commit_db
 from sqlalchemy import desc
 from app.lib.log import *
 
 with open(os.path.join("./app", 'params.json'), "r") as f:
   params = json.load(f)
 
-@celery.task(name="get_manifest")
-def run_get_manifest():
-    task_id = run_get_manifest.request.id
+@celery.task(name="get_scheduled_results")
+def run_scheduled_results():
+    task_id = run_scheduled_results.request.id
 
-    s = Schedule(task_id)
+    s = Schedule()
+    s.task_id = task_id
     db_session.add(s)
     commit_db()
 
@@ -22,11 +23,16 @@ def run_get_manifest():
     seasons = [params['schedule'][row_id]['season']]
     races = [params['schedule'][row_id]['roundID']]
 
-    # print(str(db.session.query(Schedule).all()))
-    # print(rowId, params['schedule'][rowId]['season'], params['schedule'][rowId]['roundID'])
-
     df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races)
+    df_qualifying = extract_to_df_race('qualifying', seasons, races)
+    df_lapTimes = extract_to_df_race('laps', seasons, races)
+    df_pitStops = extract_to_df_race('pitstops', seasons, races)
+
     save_races_to_db(df_races, db_session)
     save_results_to_db(df_results, db_session)
+    save_qual_to_db(df_qualifying, db_session)
+    save_laptimes_to_db(df_lapTimes, db_session)
+    save_pitstops_to_db(df_pitStops, db_session)
+    
 
 

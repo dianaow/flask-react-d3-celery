@@ -69,6 +69,55 @@ class Results(db.Model, MethodsMixin):
         for key in keys:
             setattr(self, key, kwargs.get(key))
 
+class Qualifying(db.Model, MethodsMixin):
+    __tablename__ = 'qualifying'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    driverRef = db.Column(db.String(120))
+    season = db.Column(db.Integer)
+    roundId = db.Column(db.Integer)
+    raceName = db.Column(db.String(120))
+    Q1 = db.Column(db.Float)
+    Q2 = db.Column(db.Float)
+    Q3 = db.Column(db.Float)
+    position = db.Column(db.Integer)
+
+    def __init__(self, **kwargs):
+        keys = ['id', 'driverRef', 'season', 'raceName', 'Q1', 'Q2', 'Q3', 'position']
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
+
+class LapTimes(db.Model, MethodsMixin):
+    __tablename__ = 'laptimes'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    driverRef = db.Column(db.String(120))
+    season = db.Column(db.Integer)
+    roundId = db.Column(db.Integer)
+    raceName = db.Column(db.String(120))
+    lap = db.Column(db.Integer)
+    time = db.Column(db.Float)
+    position = db.Column(db.Integer)
+    
+    def __init__(self, **kwargs):
+        keys = ['id', 'driverRef', 'season', 'roundId', 'raceName', 'lap', 'time', 'position']
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
+
+class PitStops(db.Model, MethodsMixin):
+    __tablename__ = 'pitstops'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    driverRef = db.Column(db.String(120))
+    season = db.Column(db.Integer)
+    roundId = db.Column(db.Integer)
+    raceName = db.Column(db.String(120))
+    lap = db.Column(db.Integer)
+    duration = db.Column(db.Float)
+    stop = db.Column(db.Integer)   
+
+    def __init__(self, **kwargs):
+        keys = ['id', 'driverRef', 'season', 'roundId', 'raceName', 'lap', 'duration', 'stop']
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
+
 class Schedule(db.Model, MethodsMixin):
     __tablename__ = 'schedule'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)

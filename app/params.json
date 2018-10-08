@@ -1,10 +1,4 @@
 {
-	"log_params" : {
-		"startSeason": 2016,
-	    "endSeason": 2018,
-	    "startRaceID": 1
-	},
-
     "schedule": {
     	"1": {
     		"season": 2018,

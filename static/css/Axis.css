@@ -1,0 +1,23 @@
+.Axis path,
+.Axis line {
+  stroke: #E0E0E0;
+}
+
+.Axis text {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 20px;
+  fill: black;
+}
+
+.Axis-Bottom text {
+  transform: rotate(-90deg);
+  text-anchor: end;
+}
+
+.Axis-Bottom .tick line {
+    display:none;
+}
+
+.Axis-Bottom path {
+    display:none;
+}
