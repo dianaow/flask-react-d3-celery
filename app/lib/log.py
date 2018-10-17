@@ -3,8 +3,8 @@ from app.utils import *
 
 
 def get_results_archive():
-    seasons = [2015]
-    races_round = range(1, 3)
+    seasons = [2016, 2017, 2018]
+    races_round = range(1, 21)
 
     df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races_round)
 
@@ -13,8 +13,8 @@ def get_results_archive():
 
 def get_qual_archive():
 
-    seasons = [2015]
-    races_round = range(1, 3)
+    seasons = [2016, 2017, 2018]
+    races_round = range(1, 21)
 
     df_qualifying = extract_to_df_race('qualifying', seasons, races_round)
     save_qual_to_db(df_qualifying, db.session)
@@ -31,8 +31,8 @@ def get_laptimes_archive():
 
 def get_pitstops_archive():
 
-    seasons = [2015]
-    races_round = range(1, 2)
+    seasons = [2016, 2017, 2018]
+    races_round = range(1, 21)
 
     df_pitStops = extract_to_df_race('pitstops', seasons, races_round)
     save_pitstops_to_db(df_pitStops, db.session)
@@ -49,6 +49,7 @@ def save_results_to_db(df_results, db_session):
         r.grid= df_results.loc[idx,"grid"]
         r.laps= df_results.loc[idx,"laps"]
         r.position= df_results.loc[idx,"position"]
+        r.points= df_results.loc[idx,"points"]
         r.status= df_results.loc[idx,"status"]
 
         db_session.add(r)
@@ -62,6 +63,7 @@ def save_results_to_db(df_results, db_session):
 def save_qual_to_db(df_qualifying, db_session):
     for idx,row in df_qualifying.iterrows():
         r = Qualifying()
+        r.constructorRef = df_qualifying.loc[idx,"constructorRef"]
         r.driverRef = df_qualifying.loc[idx,"driverRef"]
         r.season= df_qualifying.loc[idx,"season"]
         r.raceName= df_qualifying.loc[idx,"raceName"]

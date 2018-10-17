@@ -18,5 +18,9 @@ SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://{username}:{password}@{hostname
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
+CRON_MIN = environ.get('CRON_MIN')
+CRON_HOUR = environ.get('CRON_HOUR')
+CRON_DAY = environ.get('CRON_DAY')
+
 AWS_ACCESS_KEY_ID=environ.get('AWS_ACCESS_KEY_ID')
 AWS_SECRET_ACCESS_KEY=environ.get('AWS_SECRET_ACCESS_KEY')

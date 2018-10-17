@@ -9,9 +9,10 @@ from sqlalchemy.orm import sessionmaker
 celery = Celery('tasks')
 
 default_config = dict(
-    task_ignore_result=True,
+    task_ignore_result=False,
     task_store_errors_even_if_ignored=True,
-    timezone='Asia/Singapore',
+    task_track_started=True,
+    timezone='Asia/Singapore'
 )
 
 try:
@@ -27,12 +28,11 @@ celery.conf.update(default_config)
 celery.conf.beat_schedule = {
     'run_get_scheduled_results': {
         'task': 'get_scheduled_results',
-        'schedule': crontab(minute="*"),
-        #'schedule': crontab(minute=0, hour=1, day_of_week="MON"),
+        'schedule': crontab(minute=celery.conf["CRON_MIN"], hour=celery.conf["CRON_HOUR"], day_of_week=celery.conf["CRON_DAY"]),
         'args': ()
     }
 }
-
+print(celery.conf["CRON_MIN"], celery.conf["SQLALCHEMY_DATABASE_URI"])
 engine = create_engine(celery.conf["SQLALCHEMY_DATABASE_URI"], convert_unicode=True, pool_recycle=3600)
 conn = engine.connect()
 db_session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

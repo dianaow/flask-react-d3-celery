@@ -10,10 +10,13 @@ services:
       - RDS_USERNAME=${RDS_USERNAME}
       - RDS_PASSWORD=${RDS_PASSWORD}
       - RDS_HOSTNAME=${RDS_HOSTNAME}
-      - RDS_DB_NAME=${RDS_DB_NAME_PROD}
+      - RDS_DB_NAME=${RDS_DB_NAME}
+    ports:
+      - 5000:5000
     depends_on:
       - redis
       - postgres
+    entrypoint: ["python", "flask_app.py"]
   
   celery:
     restart: always
@@ -24,6 +27,9 @@ services:
       - RDS_HOSTNAME=${RDS_HOSTNAME}
       - RDS_DB_NAME=${RDS_DB_NAME}
       - REDIS_HOST=redis
+      - CRON_MIN=${CRON_MIN}
+      - CRON_HOUR=${CRON_MIN}
+      - CRON_DAY=${CRON_DAY}
     command: celery -A app.tasks worker -B -l info
     depends_on:
       - app
@@ -37,7 +43,7 @@ services:
       - POSTGRES_USER=${RDS_USERNAME}
       - POSTGRES_PASSWORD=${RDS_PASSWORD}
       - POSTGRES_HOSTNAME=${RDS_HOSTNAME}
-      - POSTGRES_DB=${RDS_DB_NAME_PROD}
+      - POSTGRES_DB=${RDS_DB_NAME}
     ports:
       - "5432:5432"
 
@@ -51,6 +57,9 @@ services:
     build:
       context: ../../../
       dockerfile: Dockerfile-node
+    volumes:
+      - ../../../:/home/ubuntu/celery-scheduler/
+      - /home/ubuntu/celery-scheduler/node_modules
     ports:
       - 3007:3000
     environment:

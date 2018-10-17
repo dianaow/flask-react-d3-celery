@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import FontAwesome from 'react-fontawesome'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import onClickOutside from "react-onclickoutside";
 import '../../css/global.css';
 
@@ -39,16 +39,16 @@ class Dropdown extends Component{
         <div className="dd-header" onClick={this.toggleList}>
           <div className="dd-header-title">{headerTitle}</div>
           {listOpen
-            ? <FontAwesome name="angle-up" size="2x"/>
-            : <FontAwesome name="angle-down" size="2x"/>
+            ? <FontAwesomeIcon icon="angle-up" size="sm" color="#ccc"/>
+            : <FontAwesomeIcon icon="angle-down" size="sm" color="#ccc"/>
           }
         </div>
         {listOpen && <ul className="dd-list">
           {list.map((item)=> (
             <li className="dd-list-item" 
                 key={item.id} 
-                onClick={() => this.selectItem(item.raceName, item.id, item.key)}>
-                  {item.raceName} {item.selected && <FontAwesome name="check"/>}
+                onClick={() => this.selectItem(item[this.props.col], item.id, item.key)}>
+                  {item[this.props.col]} {item.selected && <FontAwesomeIcon icon="check" size="sm" color="#ccc"/>}
             </li>
           ))}
         </ul>}

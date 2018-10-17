@@ -61,17 +61,19 @@ class Results(db.Model, MethodsMixin):
     grid = db.Column(db.Integer)
     laps = db.Column(db.Integer)
     position = db.Column(db.Integer)
+    points = db.Column(db.Integer)
     status = db.Column(db.String(120))
     raceName = db.Column(db.String(120))
 
     def __init__(self, **kwargs):
-        keys = ['id', 'constructorRef', 'driverRef', 'season', 'roundId', 'grid', 'laps',  'position', 'status', 'raceName']
+        keys = ['id', 'constructorRef', 'driverRef', 'season', 'roundId', 'grid', 'laps', 'position', 'points', 'status', 'raceName']
         for key in keys:
             setattr(self, key, kwargs.get(key))
 
 class Qualifying(db.Model, MethodsMixin):
     __tablename__ = 'qualifying'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    constructorRef = db.Column(db.String(120))
     driverRef = db.Column(db.String(120))
     season = db.Column(db.Integer)
     roundId = db.Column(db.Integer)
@@ -82,7 +84,7 @@ class Qualifying(db.Model, MethodsMixin):
     position = db.Column(db.Integer)
 
     def __init__(self, **kwargs):
-        keys = ['id', 'driverRef', 'season', 'raceName', 'Q1', 'Q2', 'Q3', 'position']
+        keys = ['id', 'constructorRef', 'driverRef', 'season', 'roundId', 'raceName', 'Q1', 'Q2', 'Q3', 'position']
         for key in keys:
             setattr(self, key, kwargs.get(key))
 

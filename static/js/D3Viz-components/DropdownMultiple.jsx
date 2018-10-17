@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import FontAwesome from 'react-fontawesome';
 import onClickOutside from "react-onclickoutside";
 import '../../css/global.css';
 

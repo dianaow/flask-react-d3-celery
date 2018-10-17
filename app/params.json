@@ -39,6 +39,50 @@
         "10": {
             "season": 2018,
             "roundID": 10
+        },
+        "11": {
+            "season": 2018,
+            "roundID": 11
+        },
+        "12": {
+            "season": 2018,
+            "roundID": 12
+        },
+        "13": {
+            "season": 2018,
+            "roundID": 13
+        },
+         "14": {
+            "season": 2018,
+            "roundID": 14
+        },
+        "15": {
+            "season": 2018,
+            "roundID": 15
+        },
+        "16": {
+            "season": 2018,
+            "roundID": 16
+        },
+        "17": {
+            "season": 2018,
+            "roundID": 17
+        },
+        "18": {
+            "season": 2018,
+            "roundID": 18
+        },
+        "19": {
+            "season": 2018,
+            "roundID": 19
+        },
+        "20": {
+            "season": 2018,
+            "roundID": 20
+        },
+        "21": {
+            "season": 2018,
+            "roundID": 21
         }
     }
 }

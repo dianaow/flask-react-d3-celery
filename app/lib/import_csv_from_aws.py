@@ -29,19 +29,14 @@ def import_csv_from_aws():
 	df_lapTimes['time'] = df_lapTimes['time'].map(lambda x: get_sec_laps(x))
 
 	df_lapTimes = df_lapTimes[["driverRef", "season", "raceId", "raceName", "round", "lap", "time", "position"]]
+	df_lapTimes.rename(columns={"round":"roundId"}, inplace=True)
 
 	save_races_to_db(df_races, db.session)
 
-	for i, group in df_lapTimes.groupby("raceId"):
+	#for i, group in df_lapTimes.groupby("raceId"):
 
-		g = group.drop(["raceId"], axis=1)
-		print(g.head(1).to_dict('records'))
-
-		db.session.bulk_insert_mappings(
-			LapTimes,
-			[
-				g.to_dict('records')
-			])
-		db.session.commit()
+		#g = group.drop(["raceId"], axis=1)
+		#b.session.bulk_insert_mappings(LapTimes, g.to_dict("records"))
+		#db.session.commit()
 
 

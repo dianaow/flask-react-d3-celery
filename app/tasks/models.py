@@ -56,10 +56,11 @@ class Results(MyModel):
     grid = Column(Integer)
     laps = Column(Integer)
     position = Column(Integer)
+    points = Column(Integer)
     status = Column(String(120))
     raceName = Column(String(120))
 
-    def __init__(self, constructorRef, driverRef, season, roundId, grid, laps, position, status, raceName):
+    def __init__(self, constructorRef, driverRef, season, roundId, grid, laps, position, points, status, raceName):
         self.constructorRef = constructorRef
         self.driverRef = driverRef
         self.season = season
@@ -67,6 +68,7 @@ class Results(MyModel):
         self.grid = grid
         self.laps = laps
         self.position = position
+        self.points = points
         self.status = status
         self.raceName = raceName
 
@@ -76,6 +78,7 @@ class Results(MyModel):
 class Qualifying(MyModel):
     __tablename__ = 'qualifying'
     id = Column(Integer, primary_key=True, autoincrement=True)
+    constructorRef = Column(String(120))
     driverRef = Column(String(120))
     season = Column(Integer)
     roundId = Column(Integer)
@@ -85,7 +88,8 @@ class Qualifying(MyModel):
     Q3 = Column(Float)
     position = Column(Integer)
 
-    def __init__(self, driverRef, season, raceName, Q1, Q2, Q3, position):
+    def __init__(self, constructorRef, driverRef, season, roundId, raceName, Q1, Q2, Q3, position):
+        self.constructorRef = constructorRef
         self.driverRef = driverRef
         self.season = season
         self.raceName = raceName
@@ -151,7 +155,6 @@ class Schedule(MyModel):
     def __init__(self, task_id):
         self.task_id = task_id
         super(Schedule, self).__init__()
-
 
 def commit_db():
     try:

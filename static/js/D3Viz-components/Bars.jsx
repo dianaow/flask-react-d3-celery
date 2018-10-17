@@ -1,15 +1,7 @@
-import React, { Component } from 'react'
-import { scaleOrdinal } from 'd3-scale'
+import React, { Component, Fragment } from 'react'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 export default class Bars extends Component {
-  constructor(props) {
-    super(props)
-
-    this.colorScale = scaleOrdinal()
-                        .domain(["ferrari", "mercedes", "red_bull", "force_india", "haas", "mclaren", "renault", "sauber",  "toro_rosso", "williams"])
-                        .range(["#DC0000", "#01d2be", "#1e41ff", "#F595C8", "#828282", "#FF8700", "#FFF504", "#9B0000", "#469BFF", "#FFFFFF"])
-
-  }
 
   textColor = (e) => {
     if(e <= 10){
@@ -19,35 +11,44 @@ export default class Bars extends Component {
     }
   }
 
+  textPosition = (e, xScale, height) => {
+    if(e.position <= 10){
+      return "translate(" + (xScale(e.driverRef) + xScale.bandwidth()/2) + "," + ((height/2)-30) + ")rotate(-90)" 
+    } else {
+      return "translate(" + (xScale(e.driverRef) + xScale.bandwidth()/2) + "," + (height-30)  + ")rotate(-90)"
+    }
+  }
+
   render() {
-    const { scales, margins, data, svgDimensions } = this.props
-    const { xScale, yScale } = scales
+    const { scales, data, raceData, svgDimensions } = this.props
+    const { xScale, yScale, colorScale } = scales
     const { height } = svgDimensions
 
-    this.colorScale.domain(data.map(function (d){ return d.constructorRef }));
+    const barText = {
+     letterSpacing: '2px',
+     fontWeight: 'bold'
+    }
 
     const bars = (
       data.map(d =>
         <rect
           key={d.id}
-          className="bar"
           x={xScale(d.driverRef)}
           y={yScale(d.position)}
-          fill={this.colorScale(d.constructorRef)}
+          fill={colorScale(d.constructorRef)}
           width={xScale.bandwidth()}
-          height={height - margins.bottom - yScale(d.position)}
+          height={height - yScale(d.position)}
         />
       )
     )
 
-    const middle = (xScale.bandwidth() / data.length) / 2;
-
     const text = (
       data.map( d =>
         <text
+          style={barText}
           key={d.id}
           fill={this.textColor(d.position)}
-          transform= {"translate(" + xScale(d.driverRef) + middle + "," + (height - margins.bottom)/2 + ")rotate(-90)"}
+          transform={this.textPosition(d, xScale, height)}
         >
          {d.driverRef}
         </text>

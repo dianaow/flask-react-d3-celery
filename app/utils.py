@@ -45,7 +45,7 @@ def extract_to_df_race(results_type, seasons, races_round):
                     laptimes = transform_laptimes(dictionary, s, r) 
                     df_lapTimes = pd.concat([df_lapTimes, laptimes])
                 except:
-                    pass
+                    return []
 
         return df_lapTimes
     
@@ -69,10 +69,11 @@ def extract_to_df_race(results_type, seasons, races_round):
                     df_qual = pd.concat([df_qual, qual])
 
                 if results_type == 'pitstops': 
-                    pS = transform_pitstops(dictionary, s, r) 
+                    pS = transform_pitstops(dictionary, s, r)
+                    console.log(pS)
                     df_pitStops = pd.concat([df_pitStops, pS])
             except:
-                pass
+                return []
 
         
     if results_type == 'results': 
