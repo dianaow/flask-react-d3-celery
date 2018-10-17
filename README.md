@@ -1,4 +1,6 @@
-A full-stack dockerized web application to visualize Formula 1 race statistics, with a Python Flask server and a React front-end with d3.js as data visualization tool. 
+# Data Visualization for Formula 1 Races
+
+A full-stack dockerized web application to visualize Formula 1 race statistics from 2016 to present, with a Python Flask server and a React front-end with d3.js as data visualization tool. 
 
 ## Data Source
 - Thanks to the Ergast Developer API (https://ergast.com/mrd/), which provides data for the Formula 1 series and is updated after the conclusion of each race.
@@ -10,6 +12,10 @@ A full-stack dockerized web application to visualize Formula 1 race statistics, 
 
 ## How to automate the refresh/update of data visualization dashboard?
 - This requires automating the data collection process. To do this, I created a task scheduler within the app powered by Celery to fetch data periodically from Flask API and feed it to the data visualizations. Celery schedules data to be extracted from Ergast API every Monday morning. If the day before is not a race weekend (Race weekends are spread out from  March to November with races occurring on Sundays), nothing gets saved to database and the scheduler retries the following week.
+
+## Architecture
+
+![architecture_diagram](https://github.com/dianaow/celery-scheduler/blob/master/flask_react_celery_architecture.png) 
 
 # Getting Started
 
