@@ -1,5 +1,7 @@
+const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const dotenv = require('dotenv').config({path: 'config/docker/development/.env'});
 
 // call dotenv and it will return an Object with a parsed key 
@@ -11,13 +13,19 @@ prev[`process.env.${next}`] = JSON.stringify(env[next]);
 return prev;
 }, {});
 
-console.log(process.env.RACES_SERVICE_URL);
+console.log(process.env.NODE_ENV);
 
 const config = {
-    entry:  __dirname + '/static/js/index.jsx',
+    mode: "development",
+    devtool: 'eval-source-map',
+    entry: [
+        'webpack-hot-middleware/client?reload=true',
+        path.join(__dirname, '/static/js/index.jsx')
+    ],
     output: {
-        path: __dirname + '/static/dist',
+        path: __dirname + '/static/dist/',
         filename: 'bundle.js',
+        publicPath: '/'
     },
     resolve: {
         extensions: [".js", ".jsx", ".css"]
@@ -25,7 +33,7 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.jsx?/,
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: 'babel-loader'
             },
@@ -44,7 +52,14 @@ const config = {
             path: __dirname + '/static/dist',
             filename: 'styles.css',
         }),
-        new webpack.DefinePlugin(envKeys)
+        new webpack.DefinePlugin(envKeys),
+        new webpack.HotModuleReplacementPlugin(),
+        new HtmlWebpackPlugin({
+          inject: false,
+          hash: true,
+          template: './static/index.html',
+          filename: 'index.html'
+        })
     ]
 };
 

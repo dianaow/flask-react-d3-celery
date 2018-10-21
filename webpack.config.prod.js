@@ -11,8 +11,6 @@ prev[`process.env.${next}`] = JSON.stringify(env[next]);
 return prev;
 }, {});
 
-console.log(process.env.RACES_SERVICE_URL);
-
 const config = {
     entry:  __dirname + '/static/js/index.jsx',
     output: {
@@ -25,7 +23,7 @@ const config = {
     module: {
         rules: [
             {
-                test: /\.jsx?/,
+                test: /\.(js|jsx)$/,
                 exclude: /node_modules/,
                 use: 'babel-loader'
             },
