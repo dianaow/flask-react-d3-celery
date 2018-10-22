@@ -4,13 +4,12 @@ from app.views import *
 from app.api.list_of_apis import *
 from app.lib.log import *
 from app.lib.import_csv_from_aws import import_csv_from_aws
-import warnings
-warnings.filterwarnings("ignore", message="numpy.dtype size changed")
-warnings.filterwarnings("ignore", message="numpy.ufunc size changed")
+from flask_cors import CORS
 
 def create_app():
     app = Flask(__name__, static_folder="./static", template_folder="./static")
     app.config.from_pyfile('./app/config.py', silent=True)
+    cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
     register_blueprint(app)
     register_extension(app)
@@ -61,5 +60,7 @@ def recreate_db():
     db.drop_all()
     db.create_all()
 
+#print(app.config);
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host=app.config["API_SERVER_HOST"], port=app.config["API_SERVER_PORT"], debug=True)

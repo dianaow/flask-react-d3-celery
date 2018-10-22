@@ -3,7 +3,7 @@ from app.utils import *
 
 
 def get_results_archive():
-    seasons = [2016, 2017, 2018]
+    seasons = [2016, 2017]
     races_round = range(1, 21)
 
     df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races_round)
@@ -13,10 +13,11 @@ def get_results_archive():
 
 def get_qual_archive():
 
-    seasons = [2016, 2017, 2018]
+    seasons = [2016, 2017]
     races_round = range(1, 21)
 
     df_qualifying = extract_to_df_race('qualifying', seasons, races_round)
+    print(df_qualifying)
     save_qual_to_db(df_qualifying, db.session)
 
 
@@ -31,7 +32,7 @@ def get_laptimes_archive():
 
 def get_pitstops_archive():
 
-    seasons = [2016, 2017, 2018]
+    seasons = [2016, 2017]
     races_round = range(1, 21)
 
     df_pitStops = extract_to_df_race('pitstops', seasons, races_round)

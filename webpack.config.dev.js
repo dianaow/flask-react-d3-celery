@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const dotenv = require('dotenv').config({path: 'config/docker/development/.env'});
+const dotenv = require('dotenv').config({path: 'config/docker/development/dev-variables.env'});
 
 // call dotenv and it will return an Object with a parsed key 
 const env = dotenv.parsed;
@@ -12,8 +12,6 @@ const envKeys = Object.keys(env).reduce((prev, next) => {
 prev[`process.env.${next}`] = JSON.stringify(env[next]);
 return prev;
 }, {});
-
-console.log(process.env.NODE_ENV);
 
 const config = {
     mode: "development",

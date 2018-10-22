@@ -22,7 +22,7 @@ class Results extends Component {
 
   componentDidMount(){
 
-  	const resultsRequest = axios.get(RESULTS_SERVICE_URL, {headers: {'Access-Control-Allow-Origin': '*'}})
+  	const resultsRequest = axios.get(RESULTS_SERVICE_URL)
 							    .then(response =>
 								    response.data.data.map(result => ({
 								      	constructorRef : result.constructorRef,
@@ -41,7 +41,7 @@ class Results extends Component {
 								    )
 							     .then(results => this.setState({results}))
 
-	const qualRequest = axios.get(QUAL_SERVICE_URL, {headers: {'Access-Control-Allow-Origin': '*'}})
+	const qualRequest = axios.get(QUAL_SERVICE_URL)
   							  .then(response =>
 								    response.data.data.map(qual => ({
 								    	constructorRef : qual.constructorRef,
@@ -59,7 +59,7 @@ class Results extends Component {
 								    )
 							  .then(quals => this.setState({quals}))	  
 
-  	const racesRequest = axios.get(RACES_SERVICE_URL, {headers: {'Access-Control-Allow-Origin': '*'}})
+  	const racesRequest = axios.get(RACES_SERVICE_URL)
 							  .then(response =>
 							    response.data.data.map(race => ({
 								    season : race.season,

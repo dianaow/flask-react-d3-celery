@@ -53,7 +53,7 @@ def extract_to_df_race(results_type, seasons, races_round):
         for r in races_round:
             try:
                 response = requests.get("http://ergast.com/api/f1/" + str(s) + "/" + str(r) + "/" + str(results_type) + ".json")
-                #print response.status_code
+                #print(response.status_code)
                 dictionary = response.content 
                 dictionary = json.loads(dictionary)
                 
@@ -70,12 +70,11 @@ def extract_to_df_race(results_type, seasons, races_round):
 
                 if results_type == 'pitstops': 
                     pS = transform_pitstops(dictionary, s, r)
-                    console.log(pS)
                     df_pitStops = pd.concat([df_pitStops, pS])
             except:
-                return []
+                print("This is not working")
 
-        
+    
     if results_type == 'results': 
         constructors.drop_duplicates(keep='first', inplace=True)
         constructors = constructors.reset_index(drop=True)
@@ -90,7 +89,7 @@ def extract_to_df_race(results_type, seasons, races_round):
         df_races["dateTime"] = pd.to_datetime(df_races["date"])
 
         return df_races, df_circuits, constructors, df_drivers, df_results
-        
+     
     if results_type == 'qualifying':
         df_qual = df_qual.reset_index(drop=True).reset_index().rename(columns={'index': 'qualifyId'})
         df_qual['qualifyId'] = df_qual['qualifyId'] + 1
@@ -98,7 +97,7 @@ def extract_to_df_race(results_type, seasons, races_round):
         df_qual['Q1'] = df_qual['Q1'].map(lambda x: get_sec(x))
         df_qual['Q2'] = df_qual['Q2'].map(lambda x: get_sec(x))
         df_qual['Q3'] = df_qual['Q3'].map(lambda x: get_sec(x))
-
+        
         return  df_qual
 
     if results_type == 'pitstops':
@@ -136,7 +135,7 @@ def helper(dictionary, s, r, col):
         df_driver = pd.DataFrame()
         for i in df['Driver']:
             driver_row = pd.DataFrame.from_dict(i, orient='index').T
-            df_driver = pd.concat([df_driver, driver_row])
+            df_driver = pd.concat([df_driver, driver_row], sort=True)
         df_driver.rename(columns={'driverId': 'driverRef'}, inplace=True)
 
         # Index the race results with driver name, constructor name, raceId, season year

@@ -1,3 +1,4 @@
+const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const dotenv = require('dotenv').config({path: 'config/docker/production/.env'});
@@ -12,10 +13,12 @@ return prev;
 }, {});
 
 const config = {
+    mode: "production",
     entry:  __dirname + '/static/js/index.jsx',
     output: {
         path: __dirname + '/static/dist',
         filename: 'bundle.js',
+        publicPath: '/'
     },
     resolve: {
         extensions: [".js", ".jsx", ".css"]

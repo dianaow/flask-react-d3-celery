@@ -1,26 +1,33 @@
-from os import environ
 import os
+from dotenv import load_dotenv
 
-REDIS_HOST = environ.get('REDIS_HOST') if environ.get('REDIS_HOST') else "0.0.0.0"
+if os.getenv('FLASK_ENV')=='development':
+	load_dotenv(dotenv_path='config/docker/development/dev-variables.env')
+else:
+	load_dotenv(dotenv_path='config/docker/production/.env')
+
+REDIS_HOST = os.getenv('REDIS_HOST') if os.getenv('REDIS_HOST') else "0.0.0.0"
 REDIS_PORT = 6379
 broker_url = "redis://{host}:{port}/0".format(host=REDIS_HOST, port=str(REDIS_PORT))
 result_backend = broker_url
 
-RDS_USERNAME = environ.get('RDS_USERNAME')
-RDS_PASSWORD = environ.get('RDS_PASSWORD')
-RDS_HOSTNAME = environ.get('RDS_HOSTNAME')
-RDS_PORT = 5432
-RDS_DB_NAME = environ.get('RDS_DB_NAME')
+POSTGRES_USER = os.getenv('POSTGRES_USER')
+POSTGRES_PASSWORD = os.getenv('POSTGRES_PASSWORD')
+POSTGRES_HOST = os.getenv('POSTGRES_HOST')
+POSTGRES_DB = os.getenv('POSTGRES_DB')
+POSTGRES_PORT = 5432
 
 SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://{username}:{password}@{hostname}:{port}/{dbname}"\
-						  .format(username = RDS_USERNAME, password = RDS_PASSWORD, \
-						   hostname = RDS_HOSTNAME, port = str(RDS_PORT), dbname = RDS_DB_NAME)
+						  .format(username = POSTGRES_USER, password = POSTGRES_PASSWORD, \
+						   hostname = POSTGRES_HOST, port = str(POSTGRES_PORT), dbname = POSTGRES_DB)
 
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-CRON_MIN = environ.get('CRON_MIN')
-CRON_HOUR = environ.get('CRON_HOUR')
-CRON_DAY = environ.get('CRON_DAY')
+CRON_MIN = os.getenv('CRON_MIN')
+CRON_HOUR = os.getenv('CRON_HOUR')
+CRON_DAY = os.getenv('CRON_DAY')
 
-AWS_ACCESS_KEY_ID=environ.get('AWS_ACCESS_KEY_ID')
-AWS_SECRET_ACCESS_KEY=environ.get('AWS_SECRET_ACCESS_KEY')
+API_SERVER_HOST = os.getenv('API_SERVER_HOST')
+API_SERVER_PORT = int(os.getenv('API_SERVER_PORT'))
+WEB_SERVER_HOST = os.getenv('WEB_SERVER_HOST')
+WEB_SERVER_PORT = int(os.getenv('WEB_SERVER_PORT'))
