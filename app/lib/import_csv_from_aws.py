@@ -2,7 +2,7 @@ import boto3
 from app.models import *
 from app.config import *
 from app.lib.log import save_races_to_db, save_laptimes_to_db
-from app.utils import get_sec_laps
+from app.utils import get_sec
 import pandas as pd
 
 def import_csv_from_aws():
@@ -26,17 +26,17 @@ def import_csv_from_aws():
 	df_lapTimes = pd.merge(df_lapTimes, df_races[['raceId', 'raceName', 'season', 'round']], on=['raceId'], how='left')
 
 	df_lapTimes.fillna("0:00:00", inplace=True)
-	df_lapTimes['time'] = df_lapTimes['time'].map(lambda x: get_sec_laps(x))
+	df_lapTimes['time'] = df_lapTimes['time'].map(lambda x: get_sec(x))
 
 	df_lapTimes = df_lapTimes[["driverRef", "season", "raceId", "raceName", "round", "lap", "time", "position"]]
 	df_lapTimes.rename(columns={"round":"roundId"}, inplace=True)
 
 	save_races_to_db(df_races, db.session)
 
-	#for i, group in df_lapTimes.groupby("raceId"):
+	for i, group in df_lapTimes.groupby("raceId"):
 
-		#g = group.drop(["raceId"], axis=1)
-		#b.session.bulk_insert_mappings(LapTimes, g.to_dict("records"))
-		#db.session.commit()
+		g = group.drop(["raceId"], axis=1)
+		b.session.bulk_insert_mappings(LapTimes, g.to_dict("records"))
+		db.session.commit()
 
 

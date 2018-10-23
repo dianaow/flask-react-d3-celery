@@ -5,24 +5,23 @@ import datetime
 import xmltodict
 
 
-def get_sec_laps(time_str):
-
-    time_str = time_str[0:5] + ":" + time_str[6:]
-    m, s, ms = time_str.split(':')
-    return int(m) * 60 + int(s) + int(ms)/1000
-
 def get_sec(time_str):
 
-    time_str = time_str[0:4] + ":" + time_str[5:]
-    
-    try:
-        m, s, ms = time_str.split(':')
-    except:
-        m = 0
-        s = 0
-        ms = 0
-        
-    return int(m) * 60 + int(s) + int(ms)/1000
+    if ":" in time_str:
+        if time_str[1] == ":":
+            time_str = time_str[0:4] + ":" + time_str[5:]
+            m, s, ms = time_str.split(':')
+        elif time_str[2] == ":":
+            time_str = time_str[0:5] + ":" + time_str[6:]
+            m, s, ms = time_str.split(':')
+        else:
+            m = 0
+            s = 0
+            ms = 0
+        return int(m) * 60 + int(s) + int(ms)/1000
+
+    else:
+        return time_str
 
 def extract_to_df_race(results_type, seasons, races_round):
 
@@ -45,7 +44,7 @@ def extract_to_df_race(results_type, seasons, races_round):
                     laptimes = transform_laptimes(dictionary, s, r) 
                     df_lapTimes = pd.concat([df_lapTimes, laptimes])
                 except:
-                    return []
+                    print("Error with data transformation for season %d, race %d." % (s, r))
 
         return df_lapTimes
     
@@ -53,7 +52,6 @@ def extract_to_df_race(results_type, seasons, races_round):
         for r in races_round:
             try:
                 response = requests.get("http://ergast.com/api/f1/" + str(s) + "/" + str(r) + "/" + str(results_type) + ".json")
-                #print(response.status_code)
                 dictionary = response.content 
                 dictionary = json.loads(dictionary)
                 
@@ -72,8 +70,7 @@ def extract_to_df_race(results_type, seasons, races_round):
                     pS = transform_pitstops(dictionary, s, r)
                     df_pitStops = pd.concat([df_pitStops, pS])
             except:
-                print("This is not working")
-
+                print("Error with data transformation for season %d, race %d." % (s, r))
     
     if results_type == 'results': 
         constructors.drop_duplicates(keep='first', inplace=True)
@@ -97,7 +94,7 @@ def extract_to_df_race(results_type, seasons, races_round):
         df_qual['Q1'] = df_qual['Q1'].map(lambda x: get_sec(x))
         df_qual['Q2'] = df_qual['Q2'].map(lambda x: get_sec(x))
         df_qual['Q3'] = df_qual['Q3'].map(lambda x: get_sec(x))
-        
+        print(df_qual['Q1'])
         return  df_qual
 
     if results_type == 'pitstops':
@@ -174,7 +171,8 @@ def transform_pitstops(dictionary, s, r):
     
     df_races, df_pitStops = helper(dictionary, s, r, col='PitStops')
     df_pitStops = pd.merge(df_pitStops, df_races[['raceName', 'season', 'round']], on=['season', 'round'], how='left')
-    df_pitStops.rename(columns={'driverId':'driverRef'}, inplace=True)  
+    df_pitStops.rename(columns={'driverId':'driverRef'}, inplace=True)
+    df_pitStops['duration'] = df_pitStops['duration'].map(lambda x: get_sec(x))
     df_pitStops['duration'] = df_pitStops['duration'].astype(float)
 
     return df_pitStops

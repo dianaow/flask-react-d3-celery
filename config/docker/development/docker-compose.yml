@@ -15,8 +15,7 @@ services:
     depends_on:
       - redis
       - postgres
-    command: flask recreate_db
-    entrypoint: ["python", "flask_app.py"]
+    command: /bin/bash -c "flask recreate db && flask results && python flask_app.py"
 
   celery:
     restart: always
@@ -58,7 +57,7 @@ services:
       - 3007:3000
     env_file:
       - dev-variables.env
-    command: npm run dev-build
+    command: /bin/bash -c "npm run dev-build && npm start"
     depends_on:
       - app
 

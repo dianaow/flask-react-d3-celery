@@ -7,7 +7,7 @@ from app.lib.import_csv_from_aws import import_csv_from_aws
 from flask_cors import CORS
 
 def create_app():
-    app = Flask(__name__, static_folder="./static", template_folder="./static")
+    app = Flask(__name__)
     app.config.from_pyfile('./app/config.py', silent=True)
     cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 

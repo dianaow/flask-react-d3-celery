@@ -7,7 +7,8 @@ def get_results_archive():
     races_round = range(1, 21)
 
     df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races_round)
-
+    print(df_results.shape)
+    print(df_results.tail())
     save_results_to_db(df_results, db.session)
 
 
@@ -17,7 +18,8 @@ def get_qual_archive():
     races_round = range(1, 21)
 
     df_qualifying = extract_to_df_race('qualifying', seasons, races_round)
-    print(df_qualifying)
+    print(df_qualifying.shape)
+    print(df_qualifying.tail())
     save_qual_to_db(df_qualifying, db.session)
 
 
@@ -27,6 +29,8 @@ def get_laptimes_archive():
     races_round = range(1, 2)
 
     df_lapTimes = extract_to_df_race('laps', seasons, races_round)
+    print(df_lapTimes.shape)
+    print(df_lapTimes.tail())
     save_laptimes_to_db(df_lapTimes, db.session)
 
 
@@ -36,6 +40,8 @@ def get_pitstops_archive():
     races_round = range(1, 21)
 
     df_pitStops = extract_to_df_race('pitstops', seasons, races_round)
+    print(df_pitStops.shape)
+    print(df_pitStops.tail())
     save_pitstops_to_db(df_pitStops, db.session)
 
 
@@ -75,7 +81,11 @@ def save_qual_to_db(df_qualifying, db_session):
         r.position= df_qualifying.loc[idx,"position"]
         
         db_session.add(r)
-        db_session.commit()
+        try:
+            db_session.commit()
+        except:
+            db_session.rollback()
+            print("Unable to add item to database.")
 
 
 def save_races_to_db(df_races, db_session):
@@ -86,7 +96,11 @@ def save_races_to_db(df_races, db_session):
         r.roundId = df_races.loc[idx,"round"]
 
         db_session.add(r)
-        db_session.commit()
+        try:
+            db_session.commit()
+        except:
+            db_session.rollback()
+            print("Unable to add item to database.")
 
 
 def save_laptimes_to_db(df_lapTimes, db_session):
@@ -101,7 +115,11 @@ def save_laptimes_to_db(df_lapTimes, db_session):
         r.position= df_lapTimes.loc[idx,"position"]
         
         db_session.add(r)
-        db_session.commit()
+        try:
+            db_session.commit()
+        except:
+            db_session.rollback()
+            print("Unable to add item to database.")
 
 
 def save_pitstops_to_db(df_pitStops, db_session):
@@ -116,4 +134,8 @@ def save_pitstops_to_db(df_pitStops, db_session):
         r.stop= df_pitStops.loc[idx,"stop"]
         
         db_session.add(r)
-        db_session.commit()
+        try:
+            db_session.commit()
+        except:
+            db_session.rollback()
+            print("Unable to add item to database.")
