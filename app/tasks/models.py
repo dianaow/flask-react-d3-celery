@@ -150,7 +150,7 @@ class PitStops(MyModel):
 class Schedule(MyModel):
     __tablename__ = 'schedule'
     id = Column(Integer, primary_key=True)
-    task_id = Column(String(50))
+    task_id = Column(String(120))
 
     def __init__(self, task_id):
         self.task_id = task_id

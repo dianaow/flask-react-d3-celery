@@ -25,7 +25,7 @@ def run_scheduled_results():
     seasons = [params['schedule'][row_id]['season']]
     races = [params['schedule'][row_id]['roundID']]
 
-    df_races, df_circuits, constructors, df_drivers, df_results = extract_to_df_race('results', seasons, races)
+    df_results, df_races = extract_to_df_race('results', seasons, races)
     df_qualifying = extract_to_df_race('qualifying', seasons, races)
     df_lapTimes = extract_to_df_race('laps', seasons, races)
     df_pitStops = extract_to_df_race('pitstops', seasons, races)

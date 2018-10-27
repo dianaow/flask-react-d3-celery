@@ -32,7 +32,6 @@ def register_extension(app):
     db.init_app(app)
     migrate.init_app(app)
 
-
 app = create_app()
 
 @app.cli.command()

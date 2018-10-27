@@ -7,6 +7,8 @@ redis*/
 dist/
 node_modules/
 npm-debug.log
+celerybeat-schedule.db
+v8-compile-cache-0/
 *.pyc
 __pycache__
 .DS_Store

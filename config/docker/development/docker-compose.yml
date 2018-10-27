@@ -8,23 +8,23 @@ services:
       dockerfile: Dockerfile
     env_file:
       - dev-variables.env
-    ports:
-      - 5000:5000
     volumes:
       - ../../../:/app
+    ports:
+      - "5000:5000"
+    command: /bin/bash -c "flask recreate_db && flask get_results && flask get_qual && flask get_pitstops && python flask_app.py"
     depends_on:
       - redis
       - postgres
-    command: /bin/bash -c "flask recreate db && flask results && python flask_app.py"
 
   celery:
     restart: always
     build: ../../../
     env_file:
       - dev-variables.env
-    command: celery -A app.tasks worker -B -l info
     volumes:
       - ../../../:/app
+    command: /bin/bash -c "sleep 180 && celery -A app.tasks worker -B -l info"
     depends_on:
       - app
       - redis
@@ -35,28 +35,28 @@ services:
     image: postgres:9.6
     env_file:
       - dev-variables.env
-    volumes:
-      - ./temp-postgres-data/data:/home/ubuntu/celery-scheduler/var/lib/postgresql/data
     ports:
       - "5432:5432"
 
   redis:
     image: redis
-    command: redis-server
+    environment:
+      - REDIS_HOST=redis
     ports:
       - "6379:6379"
+    command: redis-server
 
   client:
     build:
       context: ../../../
       dockerfile: Dockerfile-node
+    env_file:
+      - dev-variables.env
     volumes:
       - ../../../:/home/ubuntu/celery-scheduler/
       - /home/ubuntu/celery-scheduler/node_modules
     ports:
-      - 3007:3000
-    env_file:
-      - dev-variables.env
+      - "3000:3000"
     command: /bin/bash -c "npm run dev-build && npm start"
     depends_on:
       - app

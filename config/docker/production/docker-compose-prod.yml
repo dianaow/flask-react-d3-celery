@@ -6,13 +6,8 @@ services:
     build: 
       context: ../../../
       dockerfile: Dockerfile
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - 5000:5000
+      - "5000:5000"
     depends_on:
       - redis
       - postgres
@@ -21,15 +16,6 @@ services:
   celery:
     restart: always
     build: ../../../
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - REDIS_HOST=redis
-      - CRON_MIN=${CRON_MIN}
-      - CRON_HOUR=${CRON_MIN}
-      - CRON_DAY=${CRON_DAY}
     command: celery -A app.tasks worker -B -l info
     depends_on:
       - app
@@ -39,16 +25,13 @@ services:
   postgres:
     restart: always
     image: postgres:9.6
-    environment:
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_DB=${POSTGRES_DB}
     ports:
       - "5432:5432"
 
   redis:
     image: redis
+    environment:
+      - REDIS_HOST=redis
     command: redis-server
     ports:
       - "6379:6379"
@@ -61,13 +44,19 @@ services:
       - ../../../:/home/ubuntu/celery-scheduler/
       - /home/ubuntu/celery-scheduler/node_modules
     ports:
-      - 3007:3000
-    environment:
-      - RACES_SERVICE_URL=${RACES_SERVICE_URL}
-      - RESULTS_SERVICE_URL=${RESULTS_SERVICE_URL}
-      - QUAL_SERVICE_URL=${QUAL_SERVICE_URL}
-      - LAPTIMES_SERVICE_URL=${LAPTIMES_SERVICE_URL}
-      - PITSTOPS_SERVICE_URL=${PITSTOPS_SERVICE_URL}
-    command: npm run build
+      - "3000:3000"
+    command: /bin/bash -c "npm run build && npm start"
     depends_on:
       - app
+
+  server:
+    image: nginx
+    ports:
+     - "80:80"
+    volumes:
+#      - ../../../default.conf:/etc/nginx/conf.d/default.conf 
+      - ../../../nginx.conf:/etc/nginx/nginx.conf
+    command: /bin/bash -c "nginx -c nginx.conf && tail -f /dev/null"
+    depends_on:
+      - app
+      - client

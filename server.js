@@ -1,10 +1,8 @@
 const path = require('path');
 const express = require('express');
-const httpProxy = require('http-proxy');
 const webpack = require('webpack');
 const webpackMiddleware = require('webpack-dev-middleware');
 const webpackHotMiddleware = require('webpack-hot-middleware');
-const config = require('./webpack.config.dev.js');
 
 const isDeveloping = process.env.NODE_ENV !== 'production';
 const app = express();
@@ -15,19 +13,9 @@ app.use(function(req, res, next) {
   next();
 });
 
-const proxy = httpProxy.createProxyServer({
-  changeOrigin: true
-});
-
-app.get('/api/races', function (req, res) {
-  console.log('redirecting to flask api server');
-  proxy.web(req, res, {
-    target: "http://" + process.env.API_SERVER_HOST + ":" + process.env.API_SERVER_PORT + "/api/races"
-  });
-});
-
 if (isDeveloping) {
 
+  const config = require('./webpack.config.dev.js');
   const compiler = webpack(config);
   const middleware = webpackMiddleware(compiler, {
     publicPath: config.output.publicPath,
@@ -59,13 +47,10 @@ if (isDeveloping) {
 
 }
 
-proxy.on('error', function(e) {
-  console.log('Could not connect to proxy, please try again...');
-});
-
-app.listen(process.env.WEB_SERVER_PORT, process.env.WEB_SERVER_HOST, function onStart(err) {
+app.listen(process.env.WEB_SERVER_PORT, '0.0.0.0', function onStart(err) {
   if (err) {
     console.log(err);
   }
-  console.info('==> 🌎 Listening on port %s. Open up %s in your browser.', process.env.WEB_SERVER_PORT, "http://" + process.env.WEB_SERVER_HOST + ":" + process.env.WEB_SERVER_PORT);
+  console.info('==> 🌎 Listening on port %s. Open up http://0.0.0.0:%s/ in your browser.', process.env.WEB_SERVER_PORT, process.env.WEB_SERVER_PORT);
 });
+

@@ -12,6 +12,8 @@ npm-debug.log
 *.pyc
 __pycache__
 .DS_Store
+celerybeat-schedule.db
+v8-compile-cache-0/
 # Elastic Beanstalk Files
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
