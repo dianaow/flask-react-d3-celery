@@ -1,4 +1,4 @@
-version: '2' 
+version: '2.1' 
 
 services:
   app:
@@ -9,8 +9,10 @@ services:
     ports:
       - "5000:5000"
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
     entrypoint: ["python", "flask_app.py"]
   
   celery:
@@ -18,23 +20,37 @@ services:
     build: ../../../
     command: celery -A app.tasks worker -B -l info
     depends_on:
-      - app
-      - redis
-      - postgres
+      app:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
 
   postgres:
     restart: always
-    image: postgres:9.6
+    image: postgres:latest
+    env_file:
+      - dev-variables.env
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-    image: redis
-    environment:
-      - REDIS_HOST=redis
+    image: redis:latest
     command: redis-server
     ports:
       - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 30
 
   client:
     build:
@@ -47,10 +63,11 @@ services:
       - "3000:3000"
     command: /bin/bash -c "npm run build && npm start"
     depends_on:
-      - app
+      app:
+        condition: service_started
 
   server:
-    image: nginx
+    image: nginx:latest
     ports:
      - "80:80"
     volumes:
@@ -58,5 +75,9 @@ services:
       - ../../../nginx.conf:/etc/nginx/nginx.conf
     command: /bin/bash -c "nginx -c nginx.conf && tail -f /dev/null"
     depends_on:
-      - app
-      - client
+      app:
+        condition: service_started
+      client:
+        condition: service_started
+
+

@@ -1,4 +1,4 @@
-version: '2' 
+version: '2.1' 
 
 services:
   app:
@@ -14,8 +14,10 @@ services:
       - "5000:5000"
     command: /bin/bash -c "flask recreate_db && flask get_results && flask get_qual && flask get_pitstops && python flask_app.py"
     depends_on:
-      - redis
-      - postgres
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
   celery:
     restart: always
@@ -26,25 +28,41 @@ services:
       - ../../../:/app
     command: /bin/bash -c "sleep 180 && celery -A app.tasks worker -B -l info"
     depends_on:
-      - app
-      - redis
-      - postgres
+      app:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
 
   postgres:
     restart: always
-    image: postgres:9.6
-    env_file:
-      - dev-variables.env
+    build: ../../db
+    environment:
+      - FILLA_DB_USER=test_user
+      - FILLA_DB_PASSWORD=test_pw
+      - FILLA_DB_DATABASE=f1_flask_db
+      - POSTGRES_PASSWORD=password
     ports:
       - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
-    image: redis
+    image: redis:latest
     environment:
       - REDIS_HOST=redis
     ports:
       - "6379:6379"
     command: redis-server
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
 
   client:
     build:
@@ -59,5 +77,6 @@ services:
       - "3000:3000"
     command: /bin/bash -c "npm run dev-build && npm start"
     depends_on:
-      - app
+      app:
+        condition: service_started
 
