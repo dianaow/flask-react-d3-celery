@@ -62,7 +62,7 @@ p {
       -ms-user-select: none;
           user-select: none;
   position: relative;
-  width:250px;
+  min-width:280px;
   padding:10px;
 }
 

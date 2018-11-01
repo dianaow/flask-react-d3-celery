@@ -2,7 +2,7 @@ import boto3
 from app.models import *
 from app.config import *
 from app.lib.log import save_races_to_db, save_laptimes_to_db
-from app.utils import get_sec
+from app.utils.utils import get_sec
 import pandas as pd
 
 def import_csv_from_aws():

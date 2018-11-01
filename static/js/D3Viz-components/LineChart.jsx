@@ -1,11 +1,10 @@
-import React,{ Component, Fragment } from 'react';
+import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
-import { max } from 'd3-array';
+import { min, max, quantile } from 'd3-array';
 import Axis from './Axis'
-import Bars from './Bars'
-import Legend from './Legend'
+import LinesAndDots from './LinesAndDots'
 
-class BarChart extends Component {
+class LineChart extends Component {
 
   constructor() {
     super()
@@ -16,22 +15,21 @@ class BarChart extends Component {
 
   render() {
     
-    const data = this.props.qualData
-    const raceData = this.props.raceData
+    const{lapsData, psData, minLapTime, maxLapTime} = this.props
+
     const wrapper = { width: this.props.width, height: this.props.height }
-    const legendSpace = { width: 200, height: 400 }
     const axisSpace = { width: 30, height: 30 }
-    const margins = { top: 20, right: 20, bottom: 20, left: 30 }
-    const svgDimensions = { width: wrapper.width - legendSpace.width - axisSpace.width - margins.left - margins.right, 
+    const margins = { top: 30, right: 20, bottom: 30, left: 30 }
+    const svgDimensions = { width: wrapper.width - axisSpace.width - margins.left - margins.right, 
                             height: wrapper.height - axisSpace.height - margins.top - margins.bottom}
 
     const xScale = this.xscale
-                      .padding(0.1)
-                      .domain(data.map(d => d.driverRef))
-                      .range([margins.left, svgDimensions.width])
+                    .padding(0.1)
+                    .domain(lapsData.map(d => d.lap))
+                    .range([margins.left, svgDimensions.width])
 
     const yScale = this.yscale
-                    .domain([0, max(data, d => d.position)])
+                    .domain([min(lapsData.map(d => d.time)), max(lapsData.map(d => d.time))])
                     .range([svgDimensions.height, margins.top])
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
@@ -56,51 +54,54 @@ class BarChart extends Component {
       textTransform: 'uppercase'
     } 
 
+    const xProps = {
+      make_x_gridlines: 'True',
+      orient: 'Bottom',
+      scale: xScale,
+      translate: `translate(0, ${svgDimensions.height})`,
+      tickSize: svgDimensions.height,
+      tickPadding: 2,
+      tickValues: xScale.domain().filter(function(d,i){ return !(i%5)})
+    }
+
     const yProps = {
       orient: 'Left',
       scale: yScale,
       translate: `translate(${margins.left}, 0)`,
-      tickSizeOuter: 6,
-      tickPadding: 10
+      tickSizeOuter: 4,
+      tickPadding: 0
     }
 
-    console.log(data)
-    console.log(raceData)
+    console.log(lapsData)
+    console.log(psData)
 
     return (
+
       <svg width={wrapper.width} height={wrapper.height}>
         <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
+          <Axis {...xProps} />
           <Axis {...yProps} />
-          <Bars
+          <LinesAndDots
             scales={{ xScale, yScale, colorScale}}
-            data={data}
-            raceData={raceData}
+            lapsData={lapsData}
+            psData={psData}
             svgDimensions={svgDimensions}
-            margins={margins}
-            axisSpace={axisSpace}
           />
           <text 
             style={textStyle}
-            transform={"translate(" + (- margins.left) + "," + (svgDimensions.height/2 + margins.top + axisSpace.height) + ")rotate(-90)"}>
-            Qualifying Position
+            transform={"translate(" + (-margins.left) + "," + (svgDimensions.height/2 + margins.top + axisSpace.height) + ")rotate(-90)"}>
+            Time to complete (in sec)
           </text>
           <text 
             style={textStyle}
-            transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height + margins.top) + ")"}>
-            Race Finish Position
+            transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height) + ")"}>
+            Lap
           </text>
-        </g>
-        <g transform={"translate(" + (svgDimensions.width + axisSpace.width + margins.left + margins.right) + "," + (margins.top) + ")"}>
-          <Legend
-              colormap={teamColors}
-              data={data}
-              raceData={raceData}
-          />
         </g>
       </svg>
-    );
+    )
   }
 
-};
+}
 
-export default BarChart;
+export default LineChart;

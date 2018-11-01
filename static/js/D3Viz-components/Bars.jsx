@@ -11,16 +11,25 @@ export default class Bars extends Component {
     }
   }
 
-  textPosition = (e, xScale, height) => {
+  textPosition = (e, xScale, height, margins) => {
     if(e.position <= 10){
-      return "translate(" + (xScale(e.driverRef) + xScale.bandwidth()/2) + "," + ((height/2)-30) + ")rotate(-90)" 
+      return "translate(" + (xScale(e.driverRef) + xScale.bandwidth()/2) + "," + ((height/2)-margins.bottom) + ")rotate(-90)" 
     } else {
-      return "translate(" + (xScale(e.driverRef) + xScale.bandwidth()/2) + "," + (height-30)  + ")rotate(-90)"
+      return "translate(" + (xScale(e.driverRef) + xScale.bandwidth()/2) + "," + (height-margins.bottom)  + ")rotate(-90)"
+    }
+  }
+
+
+  textStatus = (e) => {
+    if(e != "Finished" && e != "+1 Lap" && e != "+2 Laps" && e != "+3 Laps"  && e != "+4 Laps" ){
+      return e.substring(0,3).toUpperCase()
+    } else {
+      return ""
     }
   }
 
   render() {
-    const { scales, data, raceData, svgDimensions } = this.props
+    const { scales, data, raceData, svgDimensions, margins, axisSpace } = this.props
     const { xScale, yScale, colorScale } = scales
     const { height } = svgDimensions
 
@@ -48,17 +57,31 @@ export default class Bars extends Component {
           style={barText}
           key={d.id}
           fill={this.textColor(d.position)}
-          transform={this.textPosition(d, xScale, height)}
+          transform={this.textPosition(d, xScale, height, margins)}
         >
          {d.driverRef}
         </text>
       )
     )
 
+
+    const status = (
+      raceData.map( d =>
+        <text
+          key={d.id}
+          fill='black'
+          transform={"translate(" + (xScale(d.driverRef)) + "," + (height+axisSpace.height) + ")"}
+        >
+         {this.textStatus(d.status)}
+        </text>
+      )   
+    )
+
     return (
       <g>
       {bars}
       {text}
+      {status}
       </g>
     )
   }

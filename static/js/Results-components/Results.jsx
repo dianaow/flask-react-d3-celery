@@ -2,11 +2,16 @@ import React, { Component } from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Dropdown from '../D3Viz-components/Dropdown';
 import BarChart from '../D3Viz-components/BarChart'
+import LineChart from '../D3Viz-components/LineChart'
+import Loading from './Loading'
+import { max, min } from 'd3-array';
 import axios from 'axios'
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
 const QUAL_SERVICE_URL = `${process.env.QUAL_SERVICE_URL}`
+const LAPTIMES_SERVICE_URL = `${process.env.LAPTIMES_SERVICE_URL}`
+const PITSTOPS_SERVICE_URL = `${process.env.PITSTOPS_SERVICE_URL}`
 
 class Results extends Component {
 
@@ -17,47 +22,23 @@ class Results extends Component {
       quals: [],
       races: [],
       seasons: [],
+      laptimes: [],
+      pitstops: [],
+      results_isLoaded: false,
+      quals_isLoaded: false,
+      races_isLoaded: false,
+      laps_isLoaded: false,
+      ps_isLoaded: false
     };
   }
 
   componentDidMount(){
 
   	const resultsRequest = axios.get(RESULTS_SERVICE_URL)
-							    .then(response =>
-								    response.data.data.map(result => ({
-								      	constructorRef : result.constructorRef,
-									    driverRef : result.driverRef,
-									    season : result.season,
-									    roundId : result.roundId,
-									    grid : result.grid,
-									    laps : result.laps,
-									    position : result.position,
-									    points: result.points,
-									    status : result.status,
-									    raceName : result.raceName,
-								      	key: 'results',
-								        selected: false,
-								        id: result.id}))
-								    )
-							     .then(results => this.setState({results}))
+  								.then(response => {this.setState({results: response.data.data})})
 
-	const qualRequest = axios.get(QUAL_SERVICE_URL)
-  							  .then(response =>
-								    response.data.data.map(qual => ({
-								    	constructorRef : qual.constructorRef,
-								    	driverRef : qual.driverRef,
-									    season : qual.season,
-									    roundId : qual.roundId,
-									    raceName : qual.raceName,
-									    Q1 : qual.Q1,
-									    Q2 : qual.Q2,
-									    Q3 : qual.Q3,
-									    position : qual.position,
-								      	key: 'qualifying',
-								        selected: false,
-								        id: qual.id}))
-								    )
-							  .then(quals => this.setState({quals}))	  
+	  const qualRequest = axios.get(QUAL_SERVICE_URL)
+							    .then(response => {this.setState({quals: response.data.data})})
 
   	const racesRequest = axios.get(RACES_SERVICE_URL)
 							  .then(response =>
@@ -70,6 +51,13 @@ class Results extends Component {
 							        id: race.id-1}))
 							    )
 						  .then(races => this.setDefault(races))
+						  .then(this.setState({races_isLoaded: true}))
+
+    const pitstopsRequest = axios.get(PITSTOPS_SERVICE_URL)
+                 .then(response => {this.setState({pitstops: response.data.data})})
+
+  	const laptimesRequest = axios.get(LAPTIMES_SERVICE_URL)
+								 .then(response => {this.setState({laptimes: response.data.data})})
 
   }
 
@@ -88,12 +76,9 @@ class Results extends Component {
     this.setState({key: data});
   }
 
-  filterAndSort = (races, seasons, results, quals, returnQual) => {
+  filterAndSort_ResQual = (selectedRace, selectedSeason, results, quals, returnQual) => {
 
-  	var selectedRace = races.find(d => (d.selected === true))
-    var selectedSeason = seasons.find(d => (d.selected === true))
-
-	var filteredResults = results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
+	  var filteredResults = results.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
     var filteredQualResults = quals.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
 
     filteredResults.sort((a, b) => { return (a.position) - (b.position) })
@@ -105,49 +90,100 @@ class Results extends Component {
     } else {
       return filteredResults
     }
+
   }
+
+  filterAndSort_LapsPS = (selectedRace, selectedSeason, laptimes, pitstops, returnLaps) => {
+
+	  var filteredLapsResults = laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
+    var filteredPSResults = pitstops.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
+
+    if (returnLaps) {
+      return filteredLapsResults
+    } else {
+      return filteredPSResults
+    }
+
+  }
+
 
   render() {
 
-  	const{races, seasons, results, quals, isLoading} = this.state
+  	const{races, seasons, results, quals, laptimes, pitstops} = this.state
 
-	   if (races.length === 0 || seasons.length === 0 || results.length === 0 || quals.length === 0) {
-	    return (
-		  <div className="Results">
-		    <p>Loading...</p>	
-		  </div>
-		)
-	  } else {
-	    return (
-		  <div className="Results">
+    var selectedRace = races.find(d => (d.selected === true))
+    var selectedSeason = seasons.find(d => (d.selected === true))
 
-		    <p>Formula 1 Race Results</p>
+    const chartWrapperStyle = {
+      padding: '20px'
+    } 
 
-		    <div className="wrapper">
-		      <Dropdown
-		        title="Year"
-		        col="season"
-		        list={seasons}
-		        resetThenSet={this.resetThenSet}
-		      />
-		      <Dropdown
-		        title="Select a race"
-		        col="raceName"
-		        list={races}
-		        resetThenSet={this.resetThenSet}
-		      />
-		    </div>
+    const headerStyle = {
+      textAlign: 'left',
+      fontWeight: 'bold',
+      minWidth: '350px'
+    }
 
-		    <BarChart 
-		      qualData={this.filterAndSort(races, seasons, results, quals, true)} 
-		      raceData={this.filterAndSort(races, seasons, results, quals, false)} 
-              width="1200" 
-              height="500" />
+  	if (races.length != 0 && seasons.length != 0 && results.length != 0 && quals.length != 0) {
+	    var ResultsChart = 
+	      <BarChart 
+		        qualData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, true)} 
+		        raceData={this.filterAndSort_ResQual(selectedRace, selectedSeason, results, quals, false)} 
+            width="1200" 
+            height="450" />
+  	} else {
+  	 	var ResultsChart = <Loading width="1200" height="450"/>
+  	}
 
-		  </div>
-		  );
-	    }
-	  }
+  	if (races.length != 0 && seasons.length != 0 && laptimes.length != 0 && pitstops.length != 0) {
+	    var LapsChart = 
+	      <LineChart 
+		    lapsData={this.filterAndSort_LapsPS(selectedRace, selectedSeason, laptimes, pitstops, true)} 
+		    psData={this.filterAndSort_LapsPS(selectedRace, selectedSeason, laptimes, pitstops, false)} 
+        minLapTime = {min(laptimes, d => d.time)}
+        maxLapTime = {max(laptimes, d => d.time)}
+        width="1200" 
+        height="850" />
+  	 } else {
+  	 	var LapsChart = <Loading width="1200" height="850"/>
+  	}
+
+    if (races.length != 0 && seasons.length != 0)  {
+      var Header = <div style={headerStyle}><h3>{selectedSeason.season} {selectedRace.raceName}</h3></div>
+    } else {
+      var Header = <div style={headerStyle}><h3></h3></div>
+    }
+
+    console.log(selectedSeason, selectedRace)
+
+      return (
+  	  <div className="header">
+  	    <p>FORMULA 1</p>
+  	    <div className="wrapper">
+  	      <Dropdown
+  	        title="Year"
+  	        col="season"
+  	        list={seasons}
+  	        resetThenSet={this.resetThenSet}
+  	      />
+  	      <Dropdown
+  	        title="Select a race"
+  	        col="raceName"
+  	        list={races}
+  	        resetThenSet={this.resetThenSet}
+  	      />
+          {Header}
+  	    </div>
+  	    <div style={chartWrapperStyle}>
+  	    	{ResultsChart}
+  	    </div>
+  	    <div style={chartWrapperStyle}>
+  	    	{LapsChart}
+  	    </div>
+  	  </div>
+  	);
+
+    }
 
 }
 
