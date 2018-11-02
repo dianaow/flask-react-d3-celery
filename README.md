@@ -25,7 +25,7 @@ This way, we can leverage React for SVG structure and rendering optimizations an
 
 ## Architecture
 
-![architecture_diagram](https://github.com/dianaow/celery-scheduler/blob/master/flask_react_celery_architecture.png) 
+![architecture_diagram](https://github.com/dianaow/celery-scheduler/blob/master/misc/flask_react_celery_architecture.png) 
 
 # Getting Started
 
@@ -36,7 +36,7 @@ This setup is built for deployment with Docker.
 
 ```bash
 cd ~
-git clone https://github.com/dianaow/celery-scheduler.git
+git clone https://github.com/dianaow/.git
 cd celery-scheduler
 ```
 
@@ -54,7 +54,7 @@ cd celery-scheduler
   └───docker
   │   │
   │   └───development
-  │   │   │   .env
+  │   │   │   dev-variables.env
   │   │   │   docker-compose.yml
   │   │ 
   │   └───production
@@ -74,7 +74,9 @@ cd celery-scheduler
   docker-compose -f docker-compose.yml up -d --build
   ```
   
-  You can then point your browser to http://localhost:5000
+  You can then point your browser to http://localhost:8000
+  
+  I have configured Docker such that when the postgres image is built and an instance (container) of it runs, a new database is created along with a postgres user and password. The database shuts down when the container stops and is removed.
   
   Note:
   - -f: specify docker-compose file name (Not necessary to specify, unless named differently from standard 'docker-compose.yml'
@@ -87,13 +89,25 @@ cd celery-scheduler
   ```
   docker-compose logs
   ```
+ Please refer to this repo's wiki for screenshots of what you should see from the console.
+ 
+ Check the list of running containers ```docker ps -a```
+
+ ![docker_compose_ps_a](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_ps_a.png) 
+
+ To run bash command in docker container, enter ```docker exec -i -t <CONTAINER_ID> /bin/bash```
+ 
+ For example, to check the newly created database, run ```docker exec -i -t 56bbaf49935b /bin/bash```
+ Log into the database (password is 'test_user') and you can start querying it!
+ 
+ ![docker_command_psql](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_command_psql.png) 
+
 
 3b) To stop running of docker containers:
   ```
   docker-compose down
   ```
 
+ ![docker_compose_down](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_down.png) 
 
 **For enquiries, you may contact me at diana.ow@gmail.com**
-
-

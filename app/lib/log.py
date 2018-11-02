@@ -151,4 +151,3 @@ def save_pitstops_to_db(df_pitStops, db_session):
     except:
         db_session.rollback()
         print("Unable to save pitstops records to database.")
-
