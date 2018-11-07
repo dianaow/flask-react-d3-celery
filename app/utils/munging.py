@@ -2,26 +2,6 @@
 import pandas as pd
 import numpy as np
 
-def filter_outliers_percentile(data, time_field='time', id_field='driverRef'):
-    """Returns a logical vector corresponding to the outliers (based on percentiles) for each driver. True values are the outliers"""
-
-    time75, time25 = np.percentile(data[time_field], [75 ,0])
-    iqrtime = time75 - time25        
-    timemin = time25-(iqrtime*1.5)   
-    timemax = time75+(iqrtime*1.5) 
-
-    outliers = lambda x: (
-        (x < timemin) |
-        (x > timemax)
-    )
-    
-    df_outlier = data.groupby(id_field)[[time_field]].apply(outliers).rename(columns = {"time":"outlier"})
-    data = pd.merge(data, df_outlier, left_index = True, right_index = True)
-    data = data[data['outlier'] == False]
-
-    return data
-
-
 def filter_pitlaps(df_lapTimes, df_pitStops, df_qual):
     
     df_pitStops.drop('id', axis=1, inplace=True)
@@ -31,3 +11,14 @@ def filter_pitlaps(df_lapTimes, df_pitStops, df_qual):
     wo_ps = data[data['stop'].isnull()]
 
     return wo_ps
+
+def groupBySeconds(df_laptimes, df_qual):
+
+    df_laptimes['time(rounded)'] = df_laptimes['time'].round()
+    df_laptimes = pd.DataFrame(df_laptimes.groupby(['season', 'raceName', 'driverRef', 'time(rounded)'])['lap'].agg('count')).rename(columns={'lap':'count'}).reset_index()
+    table = pd.pivot_table(df_laptimes, values='count', index=['season', 'raceName', 'driverRef'], columns=['time(rounded)'], aggfunc=np.sum)\
+            .fillna(0).reset_index()
+
+    table = pd.merge(table, df_qual[['constructorRef','driverRef', 'season', 'raceName']], on=['driverRef', 'season', 'raceName'], how='left')
+
+    return table

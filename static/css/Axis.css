@@ -10,5 +10,10 @@
 }
 
 .Axis-Bottom text {
+  text-anchor: middle;
+}
+
+.Axis-Left text {
   text-anchor: end;
+  alignment-baseline: middle;
 }

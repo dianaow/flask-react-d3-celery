@@ -21,9 +21,13 @@ export default class Bars extends Component {
 
 
   textStatus = (e) => {
+
     if(e != "Finished" && e != "+1 Lap" && e != "+2 Laps" && e != "+3 Laps"  && e != "+4 Laps" ){
       return e.substring(0,3).toUpperCase()
-    } else {
+    } else if(e == "Transmission" && e == "Clutch" && e == "Hydraulics"  && e == "Electrical" && e == "Radiator" && e == "Brakes"  && e == "Differential" && e == "Overheating"  && e == "Mechanical" && e == "Tyre" && e == "Puncture"  && e == "Drivershaft"){
+      return "MEC"
+    }
+     else {
       return ""
     }
   }

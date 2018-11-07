@@ -1,9 +1,9 @@
 import React,{ Component, Fragment } from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
-import { max } from 'd3-array';
-import Axis from './Axis'
-import Bars from './Bars'
-import Legend from './Legend'
+import { min, max, range } from 'd3-array';
+import Axis from '../Shared-components/Axis'
+import Bars from '../Shared-components/Bars'
+import Legend from './Results-Legend'
 
 class BarChart extends Component {
 
@@ -19,11 +19,12 @@ class BarChart extends Component {
     const data = this.props.qualData
     const raceData = this.props.raceData
     const wrapper = { width: this.props.width, height: this.props.height }
-    const legendSpace = { width: 200, height: 400 }
+    const legendRight = { width: 200, height: 400 }
+    const legendBottom = { width: 1200, height: 50 }
     const axisSpace = { width: 30, height: 30 }
     const margins = { top: 20, right: 20, bottom: 20, left: 30 }
-    const svgDimensions = { width: wrapper.width - legendSpace.width - axisSpace.width - margins.left - margins.right, 
-                            height: wrapper.height - axisSpace.height - margins.top - margins.bottom}
+    const svgDimensions = { width: wrapper.width - legendRight.width - axisSpace.width - margins.left - margins.right, 
+                            height: wrapper.height - axisSpace.height - margins.top - margins.bottom - legendBottom.height}
 
     const xScale = this.xscale
                       .padding(0.1)
@@ -56,16 +57,18 @@ class BarChart extends Component {
       textTransform: 'uppercase'
     } 
 
+    const bottomLegendStyle = {
+      color: '#E0E0E0',
+      fontSize: '10px'
+    } 
+
     const yProps = {
       orient: 'Left',
       scale: yScale,
       translate: `translate(${margins.left}, 0)`,
-      tickSizeOuter: 6,
-      tickPadding: 10
+      tickSize: 0,
+      tickValues: range(0, max(data, d => d.position)+1, 2)
     }
-
-    console.log(data)
-    console.log(raceData)
 
     return (
       <svg width={wrapper.width} height={wrapper.height}>
@@ -88,6 +91,11 @@ class BarChart extends Component {
             style={textStyle}
             transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height + margins.top) + ")"}>
             Race Finish Position
+          </text>
+          <text
+            style={bottomLegendStyle}
+            transform={"translate(" + (margins.left) + "," + (svgDimensions.height + axisSpace.height + legendBottom.height) + ")"}>
+              ACC: Accident, COL: Collison, ENG: Engine, GEA: Gearbox, SPU: Spun Off, SUS: Suspension
           </text>
         </g>
         <g transform={"translate(" + (svgDimensions.width + axisSpace.width + margins.left + margins.right) + "," + (margins.top) + ")"}>

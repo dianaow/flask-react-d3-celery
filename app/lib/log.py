@@ -30,8 +30,8 @@ def get_qual_archive():
 
 def get_laptimes_archive():
 
-    seasons = [2016]
-    races_round = range(3,21)
+    seasons = [2017]
+    races_round = range(1,3)
     startTime = datetime.now()
     df_lapTimes = extract_to_df_race('laps', seasons, races_round)
     #print(df_lapTimes.tail())

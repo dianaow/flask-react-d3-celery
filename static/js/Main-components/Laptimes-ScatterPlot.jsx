@@ -1,10 +1,10 @@
 import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
-import { min, max, quantile } from 'd3-array';
-import Axis from './Axis'
-import LinesAndDots from './LinesAndDots'
+import { min, max, range } from 'd3-array';
+import Axis from '../Shared-components/Axis'
+import Dots from '../Shared-components/Dots'
 
-class LineChart extends Component {
+class ScatterPlot extends Component {
 
   constructor() {
     super()
@@ -15,7 +15,7 @@ class LineChart extends Component {
 
   render() {
     
-    const{lapsData, psData, minLapTime, maxLapTime} = this.props
+    const{lapsData, minLapTime} = this.props
 
     const wrapper = { width: this.props.width, height: this.props.height }
     const axisSpace = { width: 30, height: 30 }
@@ -24,12 +24,11 @@ class LineChart extends Component {
                             height: wrapper.height - axisSpace.height - margins.top - margins.bottom}
 
     const xScale = this.xscale
-                    .padding(0.1)
                     .domain(lapsData.map(d => d.lap))
                     .range([margins.left, svgDimensions.width])
 
     const yScale = this.yscale
-                    .domain([min(lapsData.map(d => d.time)), max(lapsData.map(d => d.time))])
+                    .domain([minLapTime, max(lapsData.map(d => d.time))])
                     .range([svgDimensions.height, margins.top])
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
@@ -55,12 +54,10 @@ class LineChart extends Component {
     } 
 
     const xProps = {
-      make_x_gridlines: 'True',
       orient: 'Bottom',
       scale: xScale,
       translate: `translate(0, ${svgDimensions.height})`,
       tickSize: svgDimensions.height,
-      tickPadding: 2,
       tickValues: xScale.domain().filter(function(d,i){ return !(i%5)})
     }
 
@@ -68,12 +65,19 @@ class LineChart extends Component {
       orient: 'Left',
       scale: yScale,
       translate: `translate(${margins.left}, 0)`,
-      tickSizeOuter: 4,
-      tickPadding: 0
+      tickSize: 0,
+      tickValues: range(Math.round(minLapTime), Math.round(max(lapsData.map(d => d.time))+1), 1)
     }
 
-    console.log(lapsData)
-    console.log(psData)
+    const lapsData_new = lapsData.map(d => {
+      return {
+          id: d.id,
+          radius: 3, 
+          color: colorScale(d.constructorRef),
+          x: xScale(d.lap),
+          y: yScale(d.time)
+      };
+    });
 
     return (
 
@@ -81,11 +85,8 @@ class LineChart extends Component {
         <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
           <Axis {...xProps} />
           <Axis {...yProps} />
-          <LinesAndDots
-            scales={{ xScale, yScale, colorScale}}
-            lapsData={lapsData}
-            psData={psData}
-            svgDimensions={svgDimensions}
+          <Dots
+            data={lapsData_new}
           />
           <text 
             style={textStyle}
@@ -104,4 +105,4 @@ class LineChart extends Component {
 
 }
 
-export default LineChart;
+export default ScatterPlot;

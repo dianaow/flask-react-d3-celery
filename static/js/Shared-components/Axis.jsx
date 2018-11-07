@@ -13,18 +13,11 @@ export default class Axis extends Component {
 
   renderAxis() {
     const axisType = `axis${this.props.orient}`
-    if (this.props.make_x_gridlines) {
-      var axis = d3Axis[axisType]()
-                  .scale(this.props.scale)
-                  .tickSize(-this.props.tickSize)
-                  .tickPadding(this.props.tickPadding)
-                  .tickValues(this.props.tickValues)
-    } else {
-      var axis = d3Axis[axisType]()
-                  .scale(this.props.scale)
-                  .tickSizeOuter(this.props.tickSizeOuter)
-                  .tickPadding(this.props.tickPadding)
-    }
+    
+    var axis = d3Axis[axisType]()
+                .scale(this.props.scale)
+                .tickSize(-this.props.tickSize)
+                .tickValues(this.props.tickValues)
                   
     d3Select(this.axisElement).call(axis)
   }
