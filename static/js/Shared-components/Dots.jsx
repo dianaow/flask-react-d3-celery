@@ -4,7 +4,8 @@ export default class Dots extends Component {
 
   render() {
     const { data } = this.props
-
+    console.log(data)
+    console.log(data.map( d => d.x))
     const dots = (
       data.map( d =>
         <circle

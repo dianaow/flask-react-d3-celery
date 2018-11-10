@@ -4,6 +4,7 @@ import { min, max, range, sum, quantile } from 'd3-array';
 import * as d3Collection from 'd3-collection';
 import Axis from '../Shared-components/Axis'
 import ForceGraph from '../Shared-components/ForceGraph'
+import Loading from '../Shared-components/Loading';
 
 class BeeswarmPlot extends Component {
 
@@ -86,6 +87,7 @@ class BeeswarmPlot extends Component {
     
     drivers[driver_i].cnt = cnt_so_far;
     })
+    
     return {nodes:nodes, xscale_domain:xScale.domain()}
   }
 
@@ -123,7 +125,7 @@ class BeeswarmPlot extends Component {
                         .range(teamColors.map(d => d.value))
  
     var nodes = this.createNodes(lapsData, xScale, yScale, colorScale)
-
+    //console.log(nodes.nodes)
     const textStyle = {
       textAlign: 'center',
       fontWeight: 'bold',
@@ -146,6 +148,15 @@ class BeeswarmPlot extends Component {
       tickValues: yScale.domain()
     }
 
+    if (nodes.nodes.length != 0) {
+      var forces = 
+          <ForceGraph
+            nodes={nodes.nodes}
+          />
+     } else {
+      var forces = <Loading width="1200" height="850"/>
+    }
+
     return (
 
       <svg width={wrapper.width} height={wrapper.height}>
@@ -153,9 +164,7 @@ class BeeswarmPlot extends Component {
           <Axis {...xProps} />
           <Axis {...yProps} />
           // use React to draw all the nodes, d3 already calculated the x and y
-          <ForceGraph
-            nodes={nodes.nodes}
-          />
+          {forces}
           <text 
             style={textStyle}
             transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height) + ")"}>

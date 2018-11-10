@@ -31,8 +31,6 @@ services:
   postgres:
     restart: always
     image: postgres:latest
-    env_file:
-      - dev-variables.env
     ports:
       - "5432:5432"
     healthcheck:

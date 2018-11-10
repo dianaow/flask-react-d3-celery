@@ -145,13 +145,13 @@ class Main extends Component {
   	}
 
     if (races.length != 0 && seasons.length != 0 && round_laptimes.length != 0) {
-      var distPlot = 
-        <BeeswarmPlot
-          lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
-          width="1200" 
-          height="900" /> 
+    var distPlot = 
+      <BeeswarmPlot
+        lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
+        width="1200" 
+        height="900" /> 
     } else {
-        var distPlot = <Loading width="1200" height="900"/>
+      var distPlot = <Loading width="1200" height="900"/>
     }
 
     if (races.length != 0 && seasons.length != 0)  {

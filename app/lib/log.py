@@ -5,7 +5,7 @@ from datetime import datetime
 def get_results_archive():
 
     seasons = [2016, 2017]
-    races_round = range(1, 21)
+    races_round = range(19, 21)
     startTime = datetime.now()
     df_results, df_races = extract_to_df_race('results', seasons, races_round)
     #print(df_races.tail())
@@ -19,7 +19,7 @@ def get_results_archive():
 def get_qual_archive():
 
     seasons = [2016, 2017]
-    races_round = range(1, 21)
+    races_round = range(19, 21)
     startTime = datetime.now()
     df_qualifying = extract_to_df_race('qualifying', seasons, races_round)
     #print(df_qualifying.tail())
@@ -30,8 +30,8 @@ def get_qual_archive():
 
 def get_laptimes_archive():
 
-    seasons = [2017]
-    races_round = range(1,3)
+    seasons = [2016, 2017]
+    races_round = range(19,21)
     startTime = datetime.now()
     df_lapTimes = extract_to_df_race('laps', seasons, races_round)
     #print(df_lapTimes.tail())
@@ -43,7 +43,7 @@ def get_laptimes_archive():
 def get_pitstops_archive():
 
     seasons = [2016, 2017]
-    races_round = range(1, 21)
+    races_round = range(19, 21)
     startTime = datetime.now()
     df_pitStops = extract_to_df_race('pitstops', seasons, races_round)
     #print(df_pitStops.tail())
