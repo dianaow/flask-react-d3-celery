@@ -5,43 +5,33 @@ import _ from 'lodash';
 
 class ForceGraph extends Component {
 
-  constructor() {
-    super();
-    this.state = {nodes: []};
-  }
-
-  componentDidMount() {
+  componentWillMount() {
     this.updateNodePositions(this.props.nodes)
   }
 
-  componentDidUpdate(prevProps, prevState) {
-
-    if (this.props.nodes != prevProps.nodes) {
-        this.updateNodePositions(this.props.nodes)
-      }
-  }
-
-  componentWillUnmount() {
-    this.force.stop()
+  componentWillReceiveProps(nextProps) {
+    this.updateNodePositions(this.nextProps)
+    console.log(this.props.nodes, nextProps.nodes)
   }
 
   updateNodePositions = (nodes) => {
-    this.force = d3.forceSimulation(nodes)
-                  .force("x", d3.forceX(d => d.cx))
-                  .force("y", d3.forceY(d => d.cy))
-                  .force("collide", d3.forceCollide(3))
+    var simulation = d3.forceSimulation()
+                   .nodes(nodes)
+                   .force("x", d3.forceX(d => d.cx))
+                   .force("y", d3.forceY(d => d.cy))
+                   .force("collide", d3.forceCollide(3))
 
-    this.force.on('tick', () => this.setState({nodes}))
+    simulation.alpha(1).restart()
   }
 
   render() {
 
-    const {nodes} = this.state
+    const {nodes} = this.props
+
+    console.log(nodes)
 
     return (
-      <Dots
-        data={nodes}
-      />
+      <svg ref='container' />
     )
   }
 

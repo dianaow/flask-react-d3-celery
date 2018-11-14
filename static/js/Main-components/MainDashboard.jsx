@@ -7,6 +7,7 @@ import Loading from '../Shared-components/Loading';
 import BarChart from './Results-BarChart'
 import ScatterPlot from './Laptimes-ScatterPlot'
 import BeeswarmPlot from './Laptimes-BeeswarmPlot'
+import BubbleChart from './Laptimes-BubbleChart'
 
 const RESULTS_SERVICE_URL = `${process.env.RESULTS_SERVICE_URL}`
 const RACES_SERVICE_URL = `${process.env.RACES_SERVICE_URL}`
@@ -146,7 +147,7 @@ class Main extends Component {
 
     if (races.length != 0 && seasons.length != 0 && round_laptimes.length != 0) {
     var distPlot = 
-      <BeeswarmPlot
+      <BubbleChart
         lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
         width="1200" 
         height="900" /> 

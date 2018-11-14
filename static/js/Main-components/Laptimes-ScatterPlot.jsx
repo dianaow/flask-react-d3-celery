@@ -1,8 +1,10 @@
 import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
 import { min, max, range } from 'd3-array';
+import * as d3 from 'd3-selection'
 import Axis from '../Shared-components/Axis'
 import Dots from '../Shared-components/Dots'
+import Tooltip from '../Shared-components/Tooltip'
 
 class ScatterPlot extends Component {
 
@@ -11,6 +13,35 @@ class ScatterPlot extends Component {
     this.xscale = scaleBand()
     this.yscale = scaleLinear()
     this.colorScale = scaleOrdinal()
+    this.state = {
+      tooltip:{ display:false,data:{key:'',value:''}},
+    }
+  }
+
+  handleMouseOver = (e) => {
+    this.setState({tooltip:{
+        display:true,
+        data: {
+            key:e.driverRef,
+            value:e.y
+            },
+        pos:{
+            x:e.x,
+            y:e.y
+            }
+      }
+    })
+  }
+
+  handleMouseOut = (e) => {
+    this.setState({tooltip:{
+        display:false,
+        data: {
+            key:'',
+            value:''
+            }
+      }
+    })
   }
 
   render() {
@@ -28,7 +59,7 @@ class ScatterPlot extends Component {
                     .range([margins.left, svgDimensions.width])
 
     const yScale = this.yscale
-                    .domain([minLapTime, max(lapsData.map(d => d.time))])
+                    .domain([min(lapsData.map(d => d.time))-1, max(lapsData.map(d => d.time))])
                     .range([svgDimensions.height, margins.top])
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
@@ -66,7 +97,7 @@ class ScatterPlot extends Component {
       scale: yScale,
       translate: `translate(${margins.left}, 0)`,
       tickSize: 0,
-      tickValues: range(Math.round(minLapTime), Math.round(max(lapsData.map(d => d.time))+1), 1)
+      tickValues: range(Math.round(min(lapsData.map(d => d.time))), Math.round(max(lapsData.map(d => d.time))+1), 1)
     }
 
     const lapsData_new = lapsData.map(d => {
@@ -75,19 +106,30 @@ class ScatterPlot extends Component {
           radius: 3, 
           color: colorScale(d.constructorRef),
           x: xScale(d.lap),
-          y: yScale(d.time)
+          y: yScale(d.time),
+          driverRef: d.driverRef
       };
     });
 
-    return (
+    const topLegendStyle = {
+      color: '#E0E0E0',
+      fontSize: '15px'
+    } 
 
+    return (
       <svg width={wrapper.width} height={wrapper.height}>
         <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
           <Axis {...xProps} />
           <Axis {...yProps} />
           <Dots
             data={lapsData_new}
+            onMouseOverCallback={this.handleMouseOver}
+            onMouseOutCallback={this.handleMouseOut}
+            tooltip={this.state.tooltip}
           />
+          <Tooltip
+            tooltip={this.state.tooltip}
+          /> 
           <text 
             style={textStyle}
             transform={"translate(" + (-margins.left) + "," + (svgDimensions.height/2 + margins.top + axisSpace.height) + ")rotate(-90)"}>
@@ -97,6 +139,11 @@ class ScatterPlot extends Component {
             style={textStyle}
             transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height) + ")"}>
             Lap
+          </text>
+          <text
+            style={topLegendStyle}
+            transform={"translate(" + (margins.left) + "," + "0)"}>
+              Pitlaps and Laptimes above the 95th percentile are filtered out.
           </text>
         </g>
       </svg>
