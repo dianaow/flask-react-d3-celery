@@ -12,7 +12,7 @@ services:
       - ../../../:/app
     ports:
       - "5000:5000"
-    command: /bin/bash -c "flask recreate_db && flask get_results && flask get_qual && flask get_pitstops && python flask_app.py"
+    command: /bin/bash -c "flask recreate_db && flask get_results && flask get_qual && flask get_pitstops && && flask get_laptimes python flask_app.py"
     depends_on:
       redis:
         condition: service_healthy
@@ -26,7 +26,7 @@ services:
       - dev-variables.env
     volumes:
       - ../../../:/app
-    command: /bin/bash -c "sleep 180 && celery -A app.tasks worker -B -l info"
+    command: /bin/bash -c "sleep 600 && celery -A app.tasks worker -B -l info"
     depends_on:
       app:
         condition: service_started

@@ -5,19 +5,15 @@
 
 .Axis text {
   font-family: 'Nunito Sans', sans-serif;
-  font-size: 14px;
+  font-size: 12px;
   fill: black;
 }
 
 .Axis-Bottom text {
-  transform: rotate(-90deg);
+  text-anchor: middle;
+}
+
+.Axis-Left text {
   text-anchor: end;
-}
-
-.Axis-Bottom .tick line {
-    display:none;
-}
-
-.Axis-Bottom path {
-    display:none;
+  alignment-baseline: middle;
 }
