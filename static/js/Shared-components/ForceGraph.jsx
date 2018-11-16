@@ -1,37 +1,65 @@
-import React,{ Component} from 'react';
+import React, { Component } from 'react'
 import * as d3 from 'd3-force';
-import Dots from './Dots';
 import _ from 'lodash';
 
 class ForceGraph extends Component {
 
-  componentWillMount() {
+  constructor() {
+    super()
+    this.state = {nodes: []}
+    this.forceStrength = 0.8
+    this.charge=1
+  }
+
+  componentDidMount() {
     this.updateNodePositions(this.props.nodes)
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.updateNodePositions(this.nextProps)
-    console.log(this.props.nodes, nextProps.nodes)
+  componentDidUpdate(prevProps, prevState) {
+
+    if (this.props.nodes != prevProps.nodes) {
+        this.updateNodePositions(this.props.nodes)
+      }
   }
 
   updateNodePositions = (nodes) => {
-    var simulation = d3.forceSimulation()
-                   .nodes(nodes)
-                   .force("x", d3.forceX(d => d.cx))
-                   .force("y", d3.forceY(d => d.cy))
-                   .force("collide", d3.forceCollide(3))
 
-    simulation.alpha(1).restart()
+    var center = { x: this.props.svgDimensions.width / 2, y: this.props.svgDimensions.height / 2 };
+
+    this.simulation = d3.forceSimulation(nodes)  
+      .force('center', d3.forceCenter().x(center.x).y(center.y))
+      .force('charge', d3.forceManyBody().strength(this.charge))
+      .force("collide", d3.forceCollide(4))
+      .alphaDecay(0.1)
+      .velocityDecay(0.4)
+      .force('x', d3.forceX().strength(this.forceStrength).x(d => d.cx))
+      .force('y', d3.forceY().strength(this.forceStrength).y(d => d.cy))
+
+    this.simulation.on('tick', () => this.setState({nodes}))
+
   }
 
   render() {
 
-    const {nodes} = this.props
+    const {nodes} = this.state
 
-    console.log(nodes)
+    var dots = (
+      nodes.map( d =>
+        <circle
+          className={d.driverRef}
+          key={d.id}
+          cx={d.x}
+          cy={d.y}
+          r={d.radius}
+          fill={d.color}
+          opacity='1'
+        />)
+    )
 
     return (
-      <svg ref='container' />
+      <g>
+        {dots}
+      </g>
     )
   }
 

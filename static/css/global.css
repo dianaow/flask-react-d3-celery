@@ -43,7 +43,7 @@ p {
   margin-top: 100px;
 }
 .App p {
-  margin-bottom: 50px;
+  padding: 20px;
   font-size: 2.4rem;
 }
 .wrapper {

@@ -87,7 +87,7 @@ class BeeswarmPlot extends Component {
     
     drivers[driver_i].cnt = cnt_so_far;
     })
-    
+
     return {nodes:nodes, xscale_domain:xScale.domain()}
   }
 
@@ -107,6 +107,7 @@ class BeeswarmPlot extends Component {
     const yScale = this.yscale
                     .domain(lapsData.map(d => d.driverRef))
                     .range([svgDimensions.height, margins.top])
+                    .padding(2)
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
                        {id:2, key: "mercedes", value: "#01d2be"},
@@ -125,7 +126,7 @@ class BeeswarmPlot extends Component {
                         .range(teamColors.map(d => d.value))
  
     var nodes = this.createNodes(lapsData, xScale, yScale, colorScale)
-    //console.log(nodes.nodes)
+
     const textStyle = {
       textAlign: 'center',
       fontWeight: 'bold',
@@ -152,6 +153,7 @@ class BeeswarmPlot extends Component {
       var forces = 
           <ForceGraph
             nodes={nodes.nodes}
+            svgDimensions={svgDimensions}
           />
      } else {
       var forces = <Loading width="1200" height="850"/>
@@ -160,7 +162,7 @@ class BeeswarmPlot extends Component {
     return (
 
       <svg width={wrapper.width} height={wrapper.height}>
-        <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
+        <g transform={"translate(" + (axisSpace.width + margins.left) + "," + 0 + ")"}>
           <Axis {...xProps} />
           <Axis {...yProps} />
           // use React to draw all the nodes, d3 already calculated the x and y

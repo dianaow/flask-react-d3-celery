@@ -4,6 +4,7 @@ import { min, max, range, sum, quantile } from 'd3-array';
 import * as d3Collection from 'd3-collection';
 import * as d3 from 'd3-force';
 import { select, selectAll } from 'd3-selection';
+import Axis from '../Shared-components/Axis'
 
 export default class BubbleChart extends Component {
 
@@ -14,12 +15,6 @@ export default class BubbleChart extends Component {
     this.margins = { top: 30, right: 20, bottom: 30, left: 30 }
     this.svgDimensions = { width: this.wrapper.width - this.axisSpace.width - this.margins.left - this.margins.right, 
                            height: this.wrapper.height - this.axisSpace.height - this.margins.top - this.margins.bottom}
-
-    this.xScale = scaleLinear()
-                    .range([this.margins.left, this.svgDimensions.width])
-    this.yScale = scaleBand()
-                    .domain(this.props.lapsData.map(d => d.driverRef))
-                    .range([this.svgDimensions.height, this.margins.top])
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
                        {id:2, key: "mercedes", value: "#01d2be"},
@@ -36,33 +31,72 @@ export default class BubbleChart extends Component {
     this.colorScale = scaleOrdinal()
                         .domain(teamColors.map(d => d.key))
                         .range(teamColors.map(d => d.value))
-
-    this.bubbles = null;
-    this.nodes = [];
-    this.forceStrength = 0.03;
-
-    this.simulation = d3.forceSimulation()
-      .velocityDecay(0.2)
-      .force('x', d3.forceX().strength(this.forceStrength).x(d => d.x))
-      .force('y', d3.forceY().strength(this.forceStrength).y(d => d.y))
-      .force('charge', d3.forceManyBody().strength(this.charge))
-      .force("collide", d3.forceCollide(3))
-          
+    
+    this.bubbles = null
+    this.nodes = []
+    this.xScale = scaleLinear()
+    this.yScale = scaleBand()
+    this.xProps = {}
+    this.yProps = {}
+    this.simulation = d3.forceSimulation()  
   }
 
   componentDidMount() {
+    this.updateProps()
     this.container = select(this.refs.container)
     this.createNodes()
     this.renderNodes()
     this.simulation.nodes(this.nodes)
-                   .on('tick', this.ticked)
+               .on('tick', this.ticked)
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
+    if(!equal(this.props.lapsData, prevProps.lapsData)) {
+      this.updateProps()
+    }
     this.createNodes()
     this.simulation.nodes(this.nodes)
-                   .on('tick', this.ticked)
-    this.simulation.alpha(1).restart()
+               .on('tick', this.ticked)
+    this.simulation.alpha(0.8).restart()
+  }
+
+  updateProps = () => {
+    this.xScale = this.xScale
+                    .range([this.margins.left, this.svgDimensions.width])
+
+    this.yScale = this.yScale
+                    .domain(this.props.lapsData.map(d => d.driverRef))
+                    .range([this.svgDimensions.height, this.margins.top])
+
+    this.xProps = {
+      orient: 'Bottom',
+      scale: this.xScale,
+      translate: `translate(0, ${this.svgDimensions.height})`,
+      tickSize: 0,
+      tickValues: range(85.0, 106.0, 1)
+    }
+
+    this.yProps = {
+      orient: 'Left',
+      scale: this.yScale,
+      translate: `translate(${this.margins.left}, 0)`,
+      tickSize: 0,
+      tickValues: this.yScale.domain()
+    }
+
+    this.simulation
+      .force('charge', d3.forceManyBody().strength(this.charge))
+      .force("collide", d3.forceCollide(4))
+      .alphaDecay(.0005)
+      .velocityDecay(0.2)
+      .force('x', d3.forceX().strength(0.3).x(d => d.x))
+      .force('y', d3.forceY().strength(0.3).y(d => d.y))
+
+    return xScale, yScale, xProps, yProps, simulation
+  }
+
+  charge = (d) => {
+    return -Math.pow(d.radius, 2.0) * this.forceStrength;
   }
 
   getKeyValues = (arr) => {
@@ -73,10 +107,6 @@ export default class BubbleChart extends Component {
           });
         return a
       }, [])
-  }
-
-  charge = (d) => {
-    return -Math.pow(d.radius, 2.0) * this.forceStrength;
   }
 
   pruneObject = (object, desiredKeys) => {
@@ -160,9 +190,13 @@ export default class BubbleChart extends Component {
   }
 
   render() {
+    console.log(this.yScale.domain())
+    console.log(this.yProps)
     return (
       <svg width={this.wrapper.width} height={this.wrapper.height}>
         <g transform={"translate(" + (this.axisSpace.width + this.margins.left) + "," + (this.margins.top) + ")"} ref='container' />
+        <Axis {...this.xProps} />
+        <Axis {...this.yProps} />
       </svg>
     )
   }

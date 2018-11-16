@@ -114,7 +114,7 @@ class Main extends Component {
     var selectedSeason = seasons.find(d => (d.selected === true))
 
     const chartWrapperStyle = {
-      padding: '20px'
+      padding: '10px'
     } 
 
     const headerStyle = {
@@ -147,12 +147,12 @@ class Main extends Component {
 
     if (races.length != 0 && seasons.length != 0 && round_laptimes.length != 0) {
     var distPlot = 
-      <BubbleChart
+      <BeeswarmPlot
         lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
         width="1200" 
-        height="900" /> 
+        height="850" /> 
     } else {
-      var distPlot = <Loading width="1200" height="900"/>
+      var distPlot = <Loading width="1200" height="850"/>
     }
 
     if (races.length != 0 && seasons.length != 0)  {
