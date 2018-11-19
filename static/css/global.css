@@ -40,11 +40,19 @@ p {
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
-  margin-top: 100px;
+  margin-top: 10px;
 }
 .App p {
   padding: 20px;
-  font-size: 2.4rem;
+  font-size: 2.2rem;
+  text-align:center;
+}
+.App h1 {
+  padding: 10px;
+  font-size: 2.8rem;
+  text-align:center;
+  font-weight:bold;
+
 }
 .wrapper {
   display: -webkit-box;

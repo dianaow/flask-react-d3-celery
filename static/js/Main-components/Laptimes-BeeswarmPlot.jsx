@@ -1,3 +1,4 @@
+
 import React,{ Component} from 'react';
 import { scaleBand, scaleLinear, scaleOrdinal } from 'd3-scale';
 import { min, max, range, sum, quantile } from 'd3-array';
@@ -10,7 +11,7 @@ class BeeswarmPlot extends Component {
 
   constructor() {
     super()
-    this.xscale = scaleLinear()
+    this.xscale = scaleBand()
     this.yscale = scaleBand()
     this.colorScale = scaleOrdinal()
   }
@@ -41,7 +42,9 @@ class BeeswarmPlot extends Component {
     var value_fields = range(85.0, 106.0, 1)
     value_fields = value_fields.sort((a, b) => { return a-b })
     value_fields = value_fields.map(d => d.toFixed(1))
-    xScale.domain([value_fields[0], value_fields[value_fields.length-1]])
+    var value_fields_str = value_fields.map(d => d.toString())
+
+    xScale.domain(value_fields_str)
 
     // Add back the string labels
     var newItems = ['constructorRef', 'driverRef', 'season', 'raceName']; 
@@ -71,13 +74,14 @@ class BeeswarmPlot extends Component {
 
       // Create nodes based on absolute count.
       var cnt_so_far = 0;
+
       temp_data.forEach(function(d,i) {
           var new_nodes = range(d).map( x => {
               return {
                   id: driver.key + i.toString() + '_' + x.toString(),
                   radius: radius,
                   color: colorScale(driver.values[0].constructorRef),
-                  cx: xScale(value_fields[i]),
+                  cx: xScale(value_fields_str[i]),
                   cy: yScale(driver.key)
               };
           });
@@ -102,12 +106,11 @@ class BeeswarmPlot extends Component {
                             height: wrapper.height - axisSpace.height - margins.top - margins.bottom}
 
     const xScale = this.xscale
-                    .range([margins.left, svgDimensions.width])
+                    .rangeRound([margins.left, svgDimensions.width])
 
     const yScale = this.yscale
                     .domain(lapsData.map(d => d.driverRef))
-                    .range([svgDimensions.height, margins.top])
-                    .padding(2)
+                    .rangeRound([svgDimensions.height, margins.top])
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
                        {id:2, key: "mercedes", value: "#01d2be"},
@@ -133,18 +136,22 @@ class BeeswarmPlot extends Component {
       textTransform: 'uppercase'
     } 
 
+    const topLegendStyle = {
+      color: '#E0E0E0',
+      fontSize: '12px'
+    } 
+
     const xProps = {
       orient: 'Bottom',
       scale: xScale,
-      translate: `translate(0, ${svgDimensions.height})`,
+      translate: `translate(20, ${svgDimensions.height})`,
       tickSize: 0,
-      tickValues: range(85.0, 106.0, 1)
     }
 
     const yProps = {
       orient: 'Left',
       scale: yScale,
-      translate: `translate(${margins.left}, 0)`,
+      translate: `translate(${margins.left+10}, -15)`,
       tickSize: 0,
       tickValues: yScale.domain()
     }
@@ -162,7 +169,7 @@ class BeeswarmPlot extends Component {
     return (
 
       <svg width={wrapper.width} height={wrapper.height}>
-        <g transform={"translate(" + (axisSpace.width + margins.left) + "," + 0 + ")"}>
+        <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
           <Axis {...xProps} />
           <Axis {...yProps} />
           // use React to draw all the nodes, d3 already calculated the x and y
@@ -171,6 +178,11 @@ class BeeswarmPlot extends Component {
             style={textStyle}
             transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height) + ")"}>
             Time to complete (in sec)
+          </text>
+          <text
+            style={topLegendStyle}
+            transform={"translate(0,0)"}>
+              Laps where driver made a pitstop are not included. Only laptimes completed within 85 to 105 seconds are included.
           </text>
         </g>
       </svg>

@@ -113,9 +113,9 @@ class ScatterPlot extends Component {
 
     const topLegendStyle = {
       color: '#E0E0E0',
-      fontSize: '15px'
+      fontSize: '12px'
     } 
-
+    console.log(lapsData)
     return (
       <svg width={wrapper.width} height={wrapper.height}>
         <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
@@ -143,7 +143,7 @@ class ScatterPlot extends Component {
           <text
             style={topLegendStyle}
             transform={"translate(" + (margins.left) + "," + "0)"}>
-              Pitlaps and Laptimes above the 95th percentile are filtered out.
+              Pitlaps and Laptimes above the 99.5th percentile are filtered out.
           </text>
         </g>
       </svg>

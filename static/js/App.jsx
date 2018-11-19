@@ -1,19 +1,20 @@
-import React from "react";
-import { Col, Row } from 'react-bootstrap';
+import React from 'react'
+import Header from './Header'
+import Main from './Main'
+
+import '../css/global.css';
+import '../css/Axis.css';
+
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faTrophy, faCarCrash, faWrench, faTimesCircle, faCheck, faAngleUp, faAngleDown} from '@fortawesome/free-solid-svg-icons'
-import Main from './Main-components/MainDashboard';
+import { faCheck, faAngleUp, faAngleDown} from '@fortawesome/free-solid-svg-icons'
+library.add(faCheck, faAngleUp, faAngleDown)
 
-library.add(faTrophy, faCarCrash, faWrench, faTimesCircle, faCheck, faAngleUp, faAngleDown)
 
-export default class App extends React.Component {
-  render () {
-    return (
-      <div className="App">
-          <Row>
-              <Main />
-          </Row>
-      </div>
-    )
-  }
-}
+const App = () => (
+  <div className="App">
+    <Header />
+    <Main />
+  </div>
+)
+
+export default App

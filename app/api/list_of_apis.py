@@ -8,6 +8,8 @@ results_blueprint = Blueprint('results', __name__)
 qualifying_blueprint = Blueprint('qualifying', __name__)
 laptimes_blueprint = Blueprint('laptimes', __name__)
 pitstops_blueprint = Blueprint('pitstops', __name__)
+filtered_laptimes_blueprint = Blueprint('filtered_laptimes', __name__)
+rounded_laptimes_blueprint = Blueprint('rounded_laptimes', __name__)
 
 @race_blueprint.route('/api/races', methods=['GET'])
 def race():
@@ -56,7 +58,7 @@ def pitstops():
     return jsonify({"data": arr})
 
 
-@laptimes_blueprint.route('/api/filtered_laptimes', methods=['GET'])
+@filtered_laptimes_blueprint.route('/api/filtered_laptimes', methods=['GET'])
 def filtered_laptimes():
     df_lapTimes = pd.read_sql('select * from laptimes', db.session.bind)
     df_pitStops = pd.read_sql('select * from pitstops', db.session.bind)
@@ -68,7 +70,7 @@ def filtered_laptimes():
     return jsonify({"data": data})
 
 
-@laptimes_blueprint.route('/api/rounded_laptimes', methods=['GET'])
+@rounded_laptimes_blueprint.route('/api/rounded_laptimes', methods=['GET'])
 def rounded_laptimes():
     df_lapTimes = pd.read_sql('select * from laptimes', db.session.bind)
     df_pitStops = pd.read_sql('select * from pitstops', db.session.bind)

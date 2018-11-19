@@ -18,7 +18,7 @@ const config = {
     devtool: 'eval-source-map',
     entry: [
         'webpack-hot-middleware/client?reload=true',
-        path.join(__dirname, '/static/js/index.jsx')
+        path.join(__dirname, '/static/index.jsx')
     ],
     output: {
         path: __dirname + '/static/dist/',

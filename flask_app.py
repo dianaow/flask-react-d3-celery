@@ -3,7 +3,7 @@ from app.extensions import db, migrate
 from app.views import *
 from app.api.list_of_apis import *
 from app.lib.log import *
-from app.lib.import_csv_from_aws import import_csv_from_aws
+from app.lib.import_csv_laptimes import import_csv_laptimes
 from flask_cors import CORS
 
 def create_app():
@@ -26,6 +26,8 @@ def register_blueprint(app):
     app.register_blueprint(results_blueprint)
     app.register_blueprint(qualifying_blueprint)
     app.register_blueprint(laptimes_blueprint)
+    app.register_blueprint(filtered_laptimes_blueprint)
+    app.register_blueprint(rounded_laptimes_blueprint)
     app.register_blueprint(pitstops_blueprint)
 
 def register_extension(app):
@@ -42,6 +44,7 @@ def get_results():
 def get_qual():
     get_qual_archive()
 
+# It takes about 5 minutes to process and save laptimes of onr race to database
 @app.cli.command()
 def get_laptimes():
     get_laptimes_archive()    
@@ -51,8 +54,8 @@ def get_pitstops():
     get_pitstops_archive()    
 
 @app.cli.command()
-def get_aws():
-    import_csv_from_aws()  
+def import_csv():
+    import_csv_laptimes()  
 
 @app.cli.command()
 def recreate_db():

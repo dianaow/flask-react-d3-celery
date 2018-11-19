@@ -27,7 +27,6 @@ class ForceGraph extends Component {
     var center = { x: this.props.svgDimensions.width / 2, y: this.props.svgDimensions.height / 2 };
 
     this.simulation = d3.forceSimulation(nodes)  
-      .force('center', d3.forceCenter().x(center.x).y(center.y))
       .force('charge', d3.forceManyBody().strength(this.charge))
       .force("collide", d3.forceCollide(4))
       .alphaDecay(0.1)
