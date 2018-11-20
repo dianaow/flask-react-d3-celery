@@ -3,7 +3,6 @@ from app.extensions import db, migrate
 from app.views import *
 from app.api.list_of_apis import *
 from app.lib.log import *
-from app.lib.import_csv_laptimes import import_csv_laptimes
 from flask_cors import CORS
 
 def create_app():
@@ -52,11 +51,7 @@ def get_laptimes():
 @app.cli.command()
 def get_pitstops():
     get_pitstops_archive()    
-
-@app.cli.command()
-def import_csv():
-    import_csv_laptimes()  
-
+ 
 @app.cli.command()
 def recreate_db():
     db.drop_all()

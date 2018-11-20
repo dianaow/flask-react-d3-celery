@@ -91,10 +91,10 @@ class LaptimesScatter extends Component {
 	      <ScatterPlot 
 		    lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, laptimes, true)} 
         minLapTime = {min(laptimes, d => d.time)}
-        width="1200" 
-        height="750" /> 
+        width="1400" 
+        height="650" /> 
   	 } else {
-  	 	var LapsChart = <Loading width="1200" height="750"/>
+  	 	var LapsChart = <Loading width="1200" height="650"/>
   	}
 
     if (races.length != 0 && seasons.length != 0)  {

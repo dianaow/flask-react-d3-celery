@@ -16,6 +16,14 @@ class BeeswarmPlot extends Component {
     this.colorScale = scaleOrdinal()
   }
 
+  formatDriverNames = (e) => {
+    if(e.includes("_")){
+      return e.split("_")[1]
+    } else {
+      return e
+    }
+  }
+
   getKeyValues = (arr) => {
       return arr.reduce((a,b) => {
           let keys = Object.keys(b);
@@ -56,11 +64,11 @@ class BeeswarmPlot extends Component {
 
     // Nest the data by driver name
     var drivers = d3Collection.nest()
-                  .key(d => d.driverRef)
+                  .key(d => this.formatDriverNames(d.driverRef))
                   .entries(data)
 
     var nodes = [];
-    
+
     // Iterate over each driver
     drivers.forEach(function(driver,driver_i) {
 
@@ -100,16 +108,15 @@ class BeeswarmPlot extends Component {
     const{lapsData} = this.props
     
     const wrapper = { width: this.props.width, height: this.props.height }
-    const axisSpace = { width: 30, height: 30 }
-    const margins = { top: 30, right: 20, bottom: 30, left: 30 }
-    const svgDimensions = { width: wrapper.width - axisSpace.width - margins.left - margins.right, 
-                            height: wrapper.height - axisSpace.height - margins.top - margins.bottom}
-
+    const margins = { top: 60, right: 30, bottom: 0, left: 60 }
+    const svgDimensions = { width: wrapper.width - margins.left - margins.right, 
+                            height: wrapper.height - margins.top - margins.bottom}
     const xScale = this.xscale
                     .rangeRound([margins.left, svgDimensions.width])
+                    .padding(1)
 
     const yScale = this.yscale
-                    .domain(lapsData.map(d => d.driverRef))
+                    .domain(lapsData.map(d => this.formatDriverNames(d.driverRef)))
                     .rangeRound([svgDimensions.height, margins.top])
 
     const teamColors = [{id:1, key: "ferrari", value: "#DC0000"},
@@ -141,17 +148,20 @@ class BeeswarmPlot extends Component {
       fontSize: '12px'
     } 
 
+    const xbandSize = xScale.bandwidth()
+    const ybandSize = yScale.bandwidth()
+
     const xProps = {
       orient: 'Bottom',
       scale: xScale,
-      translate: `translate(20, ${svgDimensions.height})`,
-      tickSize: 0,
+      translate: `translate(-${xbandSize/2}, ${svgDimensions.height})`,
+      tickSize: 0
     }
 
     const yProps = {
       orient: 'Left',
       scale: yScale,
-      translate: `translate(${margins.left+10}, -15)`,
+      translate: `translate(${margins.left+10}, -${ybandSize/2})`,
       tickSize: 0,
       tickValues: yScale.domain()
     }
@@ -167,24 +177,21 @@ class BeeswarmPlot extends Component {
     }
 
     return (
-
       <svg width={wrapper.width} height={wrapper.height}>
-        <g transform={"translate(" + (axisSpace.width + margins.left) + "," + (margins.top) + ")"}>
           <Axis {...xProps} />
           <Axis {...yProps} />
           // use React to draw all the nodes, d3 already calculated the x and y
           {forces}
           <text 
             style={textStyle}
-            transform={"translate(" + (svgDimensions.width/2 - axisSpace.width - margins.left) + "," + (svgDimensions.height + axisSpace.height) + ")"}>
+            transform={"translate(" + (svgDimensions.width/2) + "," + (svgDimensions.height+40) + ")"}>
             Time to complete (in sec)
           </text>
           <text
             style={topLegendStyle}
-            transform={"translate(0,0)"}>
+            transform={"translate(" + (margins.left) + "," + 10 + ")"}>
               Laps where driver made a pitstop are not included. Only laptimes completed within 85 to 105 seconds are included.
           </text>
-        </g>
       </svg>
     )
   }

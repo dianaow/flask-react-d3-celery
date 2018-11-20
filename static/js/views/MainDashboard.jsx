@@ -57,7 +57,7 @@ class Main extends Component {
   filterAndSort_Laps = (selectedRace, selectedSeason, laptimes, filtQ) => {
 
 	  var filteredLapsResults = laptimes.filter(d => (d.raceName === selectedRace.raceName && d.season === selectedSeason.season))
-    console.log(filteredLapsResults)
+
     if (filtQ) {
       return this.filterQuantile(filteredLapsResults)
     } else {
@@ -88,10 +88,10 @@ class Main extends Component {
     var distPlot = 
       <BeeswarmPlot
         lapsData={this.filterAndSort_Laps(selectedRace, selectedSeason, round_laptimes, false)} 
-        width="1200" 
-        height="700" /> 
+        width="1400" 
+        height="650" /> 
     } else {
-      var distPlot = <Loading width="1200" height="700"/>
+      var distPlot = <Loading width="1400" height="650"/>
     }
 
     if (races.length != 0 && seasons.length != 0)  {
