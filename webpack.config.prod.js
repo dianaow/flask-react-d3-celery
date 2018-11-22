@@ -14,7 +14,7 @@ return prev;
 
 const config = {
     mode: "production",
-    entry:  __dirname + '/static/js/index.jsx',
+    entry:  __dirname + '/static/index.jsx',
     output: {
         path: __dirname + '/static/dist',
         filename: 'bundle.js',

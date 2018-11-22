@@ -1,5 +1,7 @@
 # base image
-FROM node:8.6.0
+FROM mhart/alpine-node:6
+
+RUN apk add --update bash && rm -rf /var/cache/apk/*
 
 # set working directory
 WORKDIR /home/ubuntu/celery-scheduler
