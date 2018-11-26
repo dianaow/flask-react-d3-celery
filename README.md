@@ -1,6 +1,13 @@
+<link rel="stylesheet" href="https://cdn.rawgit.com/konpa/devicon/df6431e323547add1b4cf45992913f15286456d3/devicon.min.css">
+
 # Data Visualization for Formula 1 Races
 
 A full-stack dockerized web application to visualize Formula 1 race statistics from 2016 to present, with a Python Flask server and a React front-end with d3.js as data visualization tool. 
+
+Hosted at: www.notforcasualfans.com
+
+<i class="devicon-javascript-plain"></i>
+<i class="devicon-d3js-plain"></i>
 
 ## Data Source
 - Thanks to the Ergast Developer API (https://ergast.com/mrd/), which provides data for the Formula 1 series and is updated after the conclusion of each race.
@@ -73,8 +80,8 @@ cd celery-scheduler
   ```
   docker-compose -f docker-compose.yml up -d --build
   ```
-  
-  You can then point your browser to http://localhost:8000
+  **Please wait approximately 10 minutes for data to finish loading, before pointing your browser to http://localhost:3000**
+  **Alternatively, you may visit: www.notforcasualfans.com to see the complete result!**
   
   I have configured Docker such that when the postgres image is built and an instance (container) of it runs, a new database is created along with a postgres user and password. The database shuts down when the container stops and is removed.
   
