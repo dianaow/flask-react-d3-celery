@@ -53,7 +53,15 @@ init_user_and_db() {
 EOSQL
 }
 
+#prefill_db() {
+  #filename="/usr/local/bin/docker-entrypoint-initdb.d/init.psql"
+  #psql $FILLA_DB_DATABASE -O -x < $filename
+#}
+
 # Executes the main routine with environment variables
 # passed through the command line. We don't use them in
 # this script but now you know 🤓
 main "$@"
+
+
+

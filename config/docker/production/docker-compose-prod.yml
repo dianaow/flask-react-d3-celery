@@ -14,19 +14,6 @@ services:
       postgres:
         condition: service_healthy
     entrypoint: ["python", "flask_app.py"]
-  
-  celery:
-    restart: always
-    build: ../../../
-    command: celery -A app.tasks worker -B -l info
-    depends_on:
-      app:
-        condition: service_started
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
 
   postgres:
     restart: always
@@ -62,20 +49,6 @@ services:
     command: /bin/bash -c "npm run build && npm start"
     depends_on:
       app:
-        condition: service_started
-
-  server:
-    image: nginx:latest
-    ports:
-     - "80:80"
-    volumes:
-#      - ../../../default.conf:/etc/nginx/conf.d/default.conf 
-      - ../../../nginx.conf:/etc/nginx/nginx.conf
-    command: /bin/bash -c "nginx -c nginx.conf && tail -f /dev/null"
-    depends_on:
-      app:
-        condition: service_started
-      client:
         condition: service_started
 
 

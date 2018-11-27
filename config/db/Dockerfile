@@ -1,3 +1,4 @@
 FROM postgres:9.6
 
-ADD ./init /docker-entrypoint-initdb.d/
+COPY ./docker-entrypoint-initdb.d ./docker-entrypoint-initdb.d
+COPY ./init.psql ./init.psql

@@ -29,7 +29,7 @@ def run_scheduled_results():
     df_qualifying = extract_to_df_race('qualifying', seasons, races)
     df_lapTimes = extract_to_df_race('laps', seasons, races)
     df_pitStops = extract_to_df_race('pitstops', seasons, races)
-
+    df_lapTimes.head()
     if (len(df_results) != 0):
 
         try:

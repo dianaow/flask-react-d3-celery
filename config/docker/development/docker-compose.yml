@@ -12,24 +12,8 @@ services:
       - ../../../:/app
     ports:
       - "5000:5000"
-    command: /bin/bash -c "flask recreate_db && flask get_results && flask get_qual && flask get_pitstops && && flask get_laptimes python flask_app.py"
+    command: /bin/bash -c "python flask_app.py"
     depends_on:
-      redis:
-        condition: service_healthy
-      postgres:
-        condition: service_healthy
-
-  celery:
-    restart: always
-    build: ../../../
-    env_file:
-      - dev-variables.env
-    volumes:
-      - ../../../:/app
-    command: /bin/bash -c "sleep 600 && celery -A app.tasks worker -B -l info"
-    depends_on:
-      app:
-        condition: service_started
       redis:
         condition: service_healthy
       postgres:
@@ -48,7 +32,7 @@ services:
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
-      timeout: 5s
+      timeout: 10s
       retries: 5
 
   redis:
@@ -75,7 +59,7 @@ services:
       - /home/ubuntu/celery-scheduler/node_modules
     ports:
       - "3000:3000"
-    command: /bin/bash -c "npm run dev-build && npm start"
+    command: /bin/bash -c "npm run dev-build && npm run start"
     depends_on:
       app:
         condition: service_started

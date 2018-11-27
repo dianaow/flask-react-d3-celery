@@ -12,7 +12,8 @@ default_config = dict(
     task_ignore_result=False,
     task_store_errors_even_if_ignored=True,
     task_track_started=True,
-    timezone='Asia/Singapore'
+    timezone='Asia/Singapore',
+    max_retries = 3
 )
 
 try:
