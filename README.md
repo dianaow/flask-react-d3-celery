@@ -1,13 +1,8 @@
-<link rel="stylesheet" href="https://cdn.rawgit.com/konpa/devicon/df6431e323547add1b4cf45992913f15286456d3/devicon.min.css">
-
 # Data Visualization for Formula 1 Races
 
 A full-stack dockerized web application to visualize Formula 1 race statistics from 2016 to present, with a Python Flask server and a React front-end with d3.js as data visualization tool. 
 
-Hosted at: www.notforcasualfans.com
-
-<i class="devicon-javascript-plain"></i>
-<i class="devicon-d3js-plain"></i>
+## Hosted at: www.notforcasualfans.com
 
 ## Data Source
 - Thanks to the Ergast Developer API (https://ergast.com/mrd/), which provides data for the Formula 1 series and is updated after the conclusion of each race.
@@ -80,10 +75,8 @@ cd celery-scheduler
   ```
   docker-compose -f docker-compose.yml up -d --build
   ```
-  **Please wait approximately 10 minutes for data to finish loading, before pointing your browser to http://localhost:3000**
-  **Alternatively, you may visit: www.notforcasualfans.com to see the complete result!**
   
-  I have configured Docker such that when the postgres image is built and an instance (container) of it runs, a new database is created along with a postgres user and password. The database shuts down when the container stops and is removed.
+  I have configured Docker such that when the postgres image is built and an instance (container) of it runs, a new database is created along with a postgres user and password. However, the database is currently empty and requires a psql script to load it with some data. The database shuts down when the container stops and is removed.
   
   Note:
   - -f: specify docker-compose file name (Not necessary to specify, unless named differently from standard 'docker-compose.yml'
@@ -92,29 +85,54 @@ cd celery-scheduler
   - --build: Build images before creating containers.
   
   
-3a) Check for successful deployment:
+**3a) Check logs for successful build and run of docker containers**
   ```
   docker-compose logs
   ```
  Please refer to this repo's wiki for screenshots of what you should see from the console.
  
- Check the list of running containers ```docker ps -a```
+**3b) Loading database with data**
+
+ I am unable to succesfully use an entrypoint script to initialize database with data, hence the workaround will be to manually load data from command line instead.
+ 
+ **i.** Check the list of running containers 
+ ```
+ docker ps -a
+ ```
 
  ![docker_compose_ps_a](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_ps_a.png) 
 
- To run bash command in docker container, enter ```docker exec -i -t <CONTAINER_ID> /bin/bash```
+ **ii.** To run bash command in docker container, enter ```docker exec -i -t <CONTAINER_ID> /bin/bash```
  
- For example, to check the newly created database, run ```docker exec -i -t 56bbaf49935b /bin/bash```
- Log into the database (password is 'test_user') and you can start querying it!
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In this case, run ```docker exec -i -t 56bbaf49935b /bin/bash``` (Note: my CONTAINER ID will be different from yours, so don't copy-paste)
+ 
+ **iii.** Run below command to dump 'init.psql' to the database
+ 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ```psql --host=localhost --port=5432 --username=test_user --password --dbname=f1_flask_db < ../init.psql```
+ 
+   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; You will then be prompted for the password for test_user, which is **'test_pw'**
+ 
+ **iv.** Log into the database. Try querying it!
  
  ![docker_command_psql](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_command_psql.png) 
+ 
+ 
+  **You may now point your browser to http://localhost:3000 to view the frontend**
+  **You may now point your browser to http://localhost:5000/api/results or view the APIs**
 
 
-3b) To stop running of docker containers:
+ **3c) Initialize task scheduler with celery**
+ 
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **i.** Based on the last step, we should still be in 'development_postgresql' container. Exit from postgresql by entering '\q'. Exit from container by entering 'exit'. Next, identify the "development_app" container id and enter it (similar to steps 3b.1 and 3b.2).
+
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; **ii.** Trigger the below command: ```celery -A app.tasks worker -B -l info```
+  
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; That's it! For testing purpose, i have set celerybeat to trigger task to data collect every 15 minutes.
+
+ **4) To stop running of docker containers and remove them**
   ```
   docker-compose down
   ```
-
- ![docker_compose_down](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_down.png) 
-
+  
+  
 **For enquiries, you may contact me at diana.ow@gmail.com**
