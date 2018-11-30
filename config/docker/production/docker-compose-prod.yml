@@ -46,7 +46,7 @@ services:
       - /home/ubuntu/celery-scheduler/node_modules
     ports:
       - "3000:3000"
-    command: /bin/bash -c "npm run build && npm start"
+    command: ["npm", "run", "start"]
     depends_on:
       app:
         condition: service_started

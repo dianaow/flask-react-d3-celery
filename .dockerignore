@@ -4,7 +4,6 @@
 redis*/
 /venv
 /migrations
-dist/
 node_modules/
 npm-debug.log
 celerybeat-schedule.db
