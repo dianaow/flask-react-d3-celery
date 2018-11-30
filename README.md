@@ -49,6 +49,7 @@ cd celery-scheduler
 - [Mac or Windows](https://docs.docker.com/engine/installation/)
 - [Ubuntu server](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
 
+
 ### **3. Build docker images with docker-compose and run it.**
 
   Configuration folder architecture:
@@ -92,11 +93,12 @@ cd celery-scheduler
   docker-compose logs
 ```
 
-Please refer to this repo's wiki for screenshots of what you should see from the console.
+  Please refer to this repo's wiki for screenshots of what you should see from the console.
+ 
  
 ### **5) Loading database with data**
 
-I am unable to succesfully use an entrypoint script to initialize database with data, hence the workaround will be to manually load data from command line instead.
+  I am unable to succesfully use an entrypoint script to initialize database with data, hence the workaround will be to manually load data from command line instead.
  
 #### **a.** Check the list of running containers 
 ```
@@ -110,21 +112,22 @@ I am unable to succesfully use an entrypoint script to initialize database with 
   docker exec -i -t <CONTAINER_ID> /bin/bash
 ```
  
-In this case, run ```docker exec -i -t 899f05bf2ec2 /bin/bash``` (Note: my CONTAINER ID will be different from yours)
+  In this case, we want to enter the 'development_postgresql' container, so run ```docker exec -i -t 899f05bf2ec2 /bin/bash``` (Note: my CONTAINER ID will be different from yours)
  
 #### **c.** Run below command to dump 'init.psql' to the database
  
-```psql --host=localhost --port=5432 --username=test_user --password --dbname=f1_flask_db < ../init.psql```
+```
+  psql --host=localhost --port=5432 --username=test_user --password --dbname=f1_flask_db < ../init.psql
+```
  
-You will then be prompted for the password for test_user, which is **'test_pw'**
+  You will then be prompted for the password for test_user, which is **'test_pw'**
  
 #### **d.** Log into the database. Try querying it!
  
 ![docker_command_psql](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_command_psql.png) 
  
  
-**You may now point your browser to http://localhost:3000 to view the frontend**
-**You may now point your browser to http://localhost:5000/api/results or view the APIs**
+**You may now point your browser to http://localhost:3000 to view the frontend, and to http://localhost:5000/api/results to view the APIs**
 
 
 ### **6) Initialize task scheduler with celery**
@@ -136,14 +139,15 @@ You will then be prompted for the password for test_user, which is **'test_pw'**
   celery -A app.tasks worker -B -l info
 ```
   
-That's it! For testing purpose, i have set celerybeat to trigger task to data collect every 15 minutes.
+  That's it! For testing purpose, i have set celerybeat to trigger task to data collect every 15 minutes.
+
 
 ### **7) To stop running of docker containers and remove them**
 ```
   docker-compose down
 ```
 
-![docker_compose_down](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_down.png)
+![docker_compose_down](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_down.png =100x)
   
   
 **For enquiries, you may contact me at diana.ow@gmail.com**
