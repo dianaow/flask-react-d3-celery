@@ -4,7 +4,7 @@ A full-stack dockerized web application to visualize Formula 1 race statistics f
 
 ## Hosted at: www.notforcasualfans.com
 
-![mystack](https://github.com/dianaow/celery-scheduler/blob/master/misc/mystack.png) 
+<img src="https://github.com/dianaow/celery-scheduler/blob/master/misc/mystack.png" alt="mystack" width="600"/>
 
 ## Data Source
 - Thanks to the Ergast Developer API (https://ergast.com/mrd/), which provides data for the Formula 1 series and is updated after the conclusion of each race.
@@ -26,6 +26,10 @@ A full-stack dockerized web application to visualize Formula 1 race statistics f
   + D3 calculates properties
 
 This way, we can leverage React for SVG structure and rendering optimizations and D3 for all its mathematical and visualization functions.
+
+## Deployment
+- The front-end and back-end was each deployed to separate AWS Elastic Beanstalk environments.
+- The Webpack build to generate static assets happens locally before deployment and the generated files are bundled with the deployment package. 
 
 ## Architecture
 
@@ -147,7 +151,7 @@ cd celery-scheduler
   docker-compose down
 ```
 
-![docker_compose_down](https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_down.png =100x)
-  
-  
+<img src="https://github.com/dianaow/celery-scheduler/blob/master/misc/docker_compose_down.png" alt="docker_compose_down" width="300"/>
+
+   
 **For enquiries, you may contact me at diana.ow@gmail.com**
