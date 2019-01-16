@@ -32,19 +32,63 @@ MyModel.query = db_session.query_property()
 
 
 class Race(MyModel):
-    __tablename__ = "races"
+    __tablename__ = "racesDesc"
     id = Column(Integer, primary_key=True)
     season = Column(Integer)
     raceName = Column(String(50))
-    roundId = Column(Integer)
+    Supersoft = Column(Integer)
+    Soft = Column(Integer)
+    Medium = Column(Integer)
+    Hard = Column(Integer)
+    Ultrasoft = Column(Integer)
+    weather = Column(String(50))
 
     def __init__(self, season, raceName, roundId):
         self.season = season
         self.raceName = raceName
         self.roundId = roundId
+        self.Supersoft = Supersoft
+        self.Soft = Soft
+        self.Medium = Medium
+        self.Hard = Hard
+        self.Ultrasoft = Ultrasoft
+        self.weather = weather
 
         super(Race, self).__init__()
 
+class Tyre(MyModel):
+    __tablename__ = "tyres"
+    id = Column(Integer, primary_key=True)
+    season = Column(Integer)
+    raceName = Column(String(50))
+    driverRef = Column(String(50))
+    first_set = Column(String(50))
+    stint_1 = Column(Integer)
+    first_set = Column(String(50))
+    stint_1 = Column(Integer)
+    first_set = Column(String(50))
+    stint_2 = Column(Integer)
+    first_set = Column(String(50))
+    stint_3 = Column(Integer)
+    first_set = Column(String(50))
+    stint_4 = Column(Integer)
+    first_set = Column(String(50))
+    stint_5 = Column(Integer)
+    first_set = Column(String(50))
+    stint_6 = Column(Integer)
+
+    def __init__(self, season, raceName, roundId):
+        self.season = season
+        self.raceName = raceName
+        self.roundId = roundId
+        self.Supersoft = Supersoft
+        self.Soft = Soft
+        self.Medium = Medium
+        self.Hard = Hard
+        self.Ultrasoft = Ultrasoft
+        self.weather = weather
+
+        super(Race, self).__init__()
 
 class Results(MyModel):
     __tablename__ = 'results'
@@ -146,6 +190,27 @@ class PitStops(MyModel):
 
         super(PitStops, self).__init__()
 
+class PitStops(MyModel):
+    __tablename__ = 'pitstops'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    driverRef = Column(String(120))
+    season = Column(Integer)
+    roundId = Column(Integer)
+    raceName = Column(String(120))
+    lap = Column(Integer)
+    duration = Column(Float)
+    stop = Column(Integer)   
+
+    def __init__(self, driverRef, season, roundId, raceName, lap, duration, stop):
+        self.driverRef = driverRef
+        self.season = season
+        self.roundId = roundId
+        self.raceName = raceName
+        self.lap = lap
+        self.duration = duration
+        self.stop = stop
+
+        super(PitStops, self).__init__()
 
 class Schedule(MyModel):
     __tablename__ = 'schedule'

@@ -25,8 +25,6 @@ def register_blueprint(app):
     app.register_blueprint(results_blueprint)
     app.register_blueprint(qualifying_blueprint)
     app.register_blueprint(laptimes_blueprint)
-    app.register_blueprint(filtered_laptimes_blueprint)
-    app.register_blueprint(rounded_laptimes_blueprint)
     app.register_blueprint(pitstops_blueprint)
 
 def register_extension(app):
@@ -35,6 +33,9 @@ def register_extension(app):
 
 app = create_app()
 
+# To run the following custom flask functions: 
+# 1) export FLASK_APP=flask_app.py
+# 2) flask get_results
 @app.cli.command()
 def get_results():
     get_results_archive()
@@ -43,7 +44,8 @@ def get_results():
 def get_qual():
     get_qual_archive()
 
-# It takes about 5 minutes to process and save laptimes of onr race to database
+# It takes about 5 minutes to process and save laptimes of one race to database
+# An alternative would be to batch import csv containing laptimes data of all races from 2016 to present (import_csv_from_aws.py), but time difference to save a race is not much different from saving direction from Ergast API
 @app.cli.command()
 def get_laptimes():
     get_laptimes_archive()    
