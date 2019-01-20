@@ -26,6 +26,7 @@ def register_blueprint(app):
     app.register_blueprint(qualifying_blueprint)
     app.register_blueprint(laptimes_blueprint)
     app.register_blueprint(pitstops_blueprint)
+    app.register_blueprint(tyre_blueprint)
 
 def register_extension(app):
     db.init_app(app)
@@ -54,6 +55,15 @@ def get_laptimes():
 def get_pitstops():
     get_pitstops_archive()    
  
+@app.cli.command()
+def get_races():
+    get_races_archive()
+
+@app.cli.command()
+def get_tyres():
+    get_tyres_archive()  
+
+
 @app.cli.command()
 def recreate_db():
     db.drop_all()

@@ -38,16 +38,45 @@ class MethodsMixin(object):
     def serialize_list(self, lis):
         return [m.serialize() for m in lis]
 
-        
 class Race(db.Model, MethodsMixin):
-    __tablename__ = 'races'
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    __tablename__ = "races"
+    id = db.Column(db.Integer, primary_key=True)
     season = db.Column(db.Integer)
-    raceName = db.Column(db.String(120))
-    roundId = db.Column(db.Integer)
+    raceName = db.Column(db.String(50))
+    Supersoft = db.Column(db.Integer)
+    Soft = db.Column(db.Integer)
+    Medium = db.Column(db.Integer)
+    Hard = db.Column(db.Integer)
+    Ultrasoft = db.Column(db.Integer)
+    weather = db.Column(db.String(50))
 
     def __init__(self, **kwargs):
-        keys = ['id', 'season', 'raceName', 'roundId']
+        keys = ['id', 'season', 'raceName', 'Supersoft', 'Soft', 'Medium', 'Hard', 'Ultrasoft', 'weather']
+        for key in keys:
+            setattr(self, key, kwargs.get(key))
+
+class Tyre(db.Model, MethodsMixin):
+    __tablename__ = "tyres"
+    id = db.Column(db.Integer, primary_key=True)
+    season = db.Column(db.Integer)
+    raceName = db.Column(db.String(50))
+    driverRef = db.Column(db.String(50))
+    first_set = db.Column(db.String(50))
+    stint_1 = db.Column(db.Integer)
+    second_set = db.Column(db.String(50))
+    stint_2 = db.Column(db.Integer)
+    third_set = db.Column(db.String(50))
+    stint_3 = db.Column(db.Integer)
+    fourth_set = db.Column(db.String(50))
+    stint_4 = db.Column(db.Integer)
+    fifth_set = db.Column(db.String(50))
+    stint_5 = db.Column(db.Integer)
+    sixth_set = db.Column(db.String(50))
+    stint_6 = db.Column(db.Integer)
+    total = db.Column(db.Integer)
+
+    def __init__(self, **kwargs):
+        keys = ['id', 'season', 'raceName', 'driverRef', 'first_set', 'stint_1', 'second_set', 'stint_2', 'third_set', 'stint_3', 'fourth_set', 'stint_4', 'fifth_set', 'stint_5', 'sixth_set', 'stint_6', 'total']
         for key in keys:
             setattr(self, key, kwargs.get(key))
 

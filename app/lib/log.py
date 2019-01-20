@@ -1,11 +1,12 @@
 from app.models import *
 from app.utils.utils import *
 from datetime import datetime
+import os
 
 def get_races_archive():
 
     startTime = datetime.now()
-    df_races = pd.read_csv('raceDescription.csv')
+    df_races = pd.read_csv(os.getcwd() + '/app/lib/raceDescription.csv')
     if len(df_races):   
         save_races_to_db(df_races, db.session)
     else:
@@ -15,7 +16,8 @@ def get_races_archive():
 def get_tyres_archive():
 
     startTime = datetime.now()
-    df_tyres = pd.read_csv('raceDescription.csv')
+    df_tyres = pd.read_csv(os.getcwd() + '/app/lib/tyreInformation.csv')
+    df_tyres.fillna(0, inplace=True)
     if len(df_tyres):   
         save_tyres_to_db(df_tyres, db.session)
     else:
@@ -94,12 +96,13 @@ def save_tyres_to_db(df_tyres, db_session):
         r.total = df_tyres.loc[idx,"total"]
 
         db_session.add(r)
-    try:
         db_session.commit()
-        print("Successfully saved tyres records to database.")
-    except:
-        db_session.rollback()
-        print("Unable to save tyres records to database.")
+    #try:
+        #db_session.commit()
+        #print("Successfully saved tyres records to database.")
+    #except:
+        #db_session.rollback()
+        #print("Unable to save tyres records to database.")
 
 def save_results_to_db(df_results, db_session):
     for idx,row in df_results.iterrows():
@@ -147,17 +150,17 @@ def save_qual_to_db(df_qualifying, db_session):
 
 
 def save_races_to_db(df_races, db_session):
+    print(df_races.head())
     for idx,row in df_races.iterrows():
         r = Race()
         r.season = df_races.loc[idx,"season"]
         r.raceName = df_races.loc[idx,"raceName"]
-        r.roundId = df_races.loc[idx,"round"]
         r.Supersoft = df_races.loc[idx,"Supersoft"]
         r.Soft = df_races.loc[idx,"Soft"]
         r.Medium = df_races.loc[idx,"Medium"]
         r.Hard = df_races.loc[idx,"Hard"]
         r.Ultrasoft = df_races.loc[idx,"Ultrasoft"]
-        r.total = df_races.loc[idx,"total"]
+        r.weather = df_races.loc[idx,"weather"]
 
         db_session.add(r)
     try:
@@ -180,13 +183,12 @@ def save_laptimes_to_db(df_lapTimes, db_session):
         r.position= df_lapTimes.loc[idx,"position"]
         
         db_session.add(r)
+    try:
         db_session.commit()
-    #try:
-        #db_session.commit()
-        #print("Successfully saved laptimes records to database.")
-    #except:
-        #db_session.rollback()
-        #print("Unable to save laptimes records to database.")
+        print("Successfully saved laptimes records to database.")
+    except:
+        db_session.rollback()
+        print("Unable to save laptimes records to database.")
 
 
 def save_pitstops_to_db(df_pitStops, db_session):

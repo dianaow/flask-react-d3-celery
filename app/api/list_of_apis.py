@@ -8,16 +8,7 @@ results_blueprint = Blueprint('results', __name__)
 qualifying_blueprint = Blueprint('qualifying', __name__)
 laptimes_blueprint = Blueprint('laptimes', __name__)
 pitstops_blueprint = Blueprint('pitstops', __name__)
-
-@race_blueprint.route('/api/races', methods=['GET'])
-def race():
-    races = db.session.query(Race).all()
-    arr = []
-
-    for race in races:
-        arr.append(race.serialize())
-
-    return jsonify({"data": arr})
+tyre_blueprint = Blueprint('tyre', __name__)
 
 @results_blueprint.route('/api/results', methods=['GET'])
 def results():
@@ -56,3 +47,22 @@ def pitstops():
     return jsonify({"data": arr})
 
 
+@race_blueprint.route('/api/races', methods=['GET'])
+def races():
+    races = db.session.query(Race).all()
+    arr = []
+
+    for race in races:
+        arr.append(race.serialize())
+
+    return jsonify({"data": arr})
+
+@tyre_blueprint.route('/api/tyres', methods=['GET'])
+def tyre():
+    tyres = db.session.query(Tyre).all()
+    arr = []
+
+    for tyre in tyres:
+        arr.append(tyre.serialize())
+
+    return jsonify({"data": arr})

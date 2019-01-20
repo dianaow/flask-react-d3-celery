@@ -30,66 +30,6 @@ class MyBase(object):
 MyModel = declarative_base()
 MyModel.query = db_session.query_property()
 
-
-class Race(MyModel):
-    __tablename__ = "racesDesc"
-    id = Column(Integer, primary_key=True)
-    season = Column(Integer)
-    raceName = Column(String(50))
-    Supersoft = Column(Integer)
-    Soft = Column(Integer)
-    Medium = Column(Integer)
-    Hard = Column(Integer)
-    Ultrasoft = Column(Integer)
-    weather = Column(String(50))
-
-    def __init__(self, season, raceName, roundId):
-        self.season = season
-        self.raceName = raceName
-        self.roundId = roundId
-        self.Supersoft = Supersoft
-        self.Soft = Soft
-        self.Medium = Medium
-        self.Hard = Hard
-        self.Ultrasoft = Ultrasoft
-        self.weather = weather
-
-        super(Race, self).__init__()
-
-class Tyre(MyModel):
-    __tablename__ = "tyres"
-    id = Column(Integer, primary_key=True)
-    season = Column(Integer)
-    raceName = Column(String(50))
-    driverRef = Column(String(50))
-    first_set = Column(String(50))
-    stint_1 = Column(Integer)
-    first_set = Column(String(50))
-    stint_1 = Column(Integer)
-    first_set = Column(String(50))
-    stint_2 = Column(Integer)
-    first_set = Column(String(50))
-    stint_3 = Column(Integer)
-    first_set = Column(String(50))
-    stint_4 = Column(Integer)
-    first_set = Column(String(50))
-    stint_5 = Column(Integer)
-    first_set = Column(String(50))
-    stint_6 = Column(Integer)
-
-    def __init__(self, season, raceName, roundId):
-        self.season = season
-        self.raceName = raceName
-        self.roundId = roundId
-        self.Supersoft = Supersoft
-        self.Soft = Soft
-        self.Medium = Medium
-        self.Hard = Hard
-        self.Ultrasoft = Ultrasoft
-        self.weather = weather
-
-        super(Race, self).__init__()
-
 class Results(MyModel):
     __tablename__ = 'results'
     id = Column(Integer, primary_key=True, autoincrement=True)
