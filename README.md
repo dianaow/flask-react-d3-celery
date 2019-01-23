@@ -4,6 +4,11 @@ A full-stack dockerized web application to visualize Formula 1 race statistics f
 
 ## Hosted at: www.notforcasualfans.com
 
+- I have moved the front-end section (React) to another repository: https://github.com/dianaow/d3-react
+- Likewise, for the back-end section (Flask+Postgresql): https://github.com/dianaow/flask-backend
+
+I will no longer be updating this repository and the latest code changes will be commited to the above repositories instead.
+
 <img src="https://github.com/dianaow/celery-scheduler/blob/master/misc/mystack.png" alt="mystack" width="600"/>
 
 ## Data Source
@@ -29,6 +34,7 @@ This way, we can leverage React for SVG structure and rendering optimizations an
 
 ## Deployment
 - The front-end and back-end was each deployed to separate AWS Elastic Beanstalk environments.
+- I attempted to deploy it as a single AWS EB app, but encountered some issues configuring Nginx to frontend my backend services. Furthermore, the larger app size meant i have to upgrade the EC2 instance type to 't2.small', which had to be paid for. Hence, it was a more viable option to deploy to two separate EC2 instances.
 - The Webpack build to generate static assets happens locally before deployment and the generated files are bundled with the deployment package. 
 
 ## Architecture
