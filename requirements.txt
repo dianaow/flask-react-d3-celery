@@ -7,7 +7,7 @@ blessed==1.15.0
 boto3==1.9.18
 botocore==1.12.18
 cached-property==1.4.3
-celery==4.1.1
+celery==5.2.2
 cement==2.8.2
 certifi==2018.4.16
 chardet==3.0.4
