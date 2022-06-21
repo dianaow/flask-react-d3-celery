@@ -34,7 +34,7 @@ kombu==4.2.1
 Mako==1.0.7
 MarkupSafe==1.0
 meld3==1.0.2
-numpy==1.15.2
+numpy==1.22.0
 pandas==0.23.4
 pathspec==0.5.5
 psycopg2==2.7.5
