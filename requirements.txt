@@ -31,7 +31,7 @@ Jinja2==2.10
 jmespath==0.9.3
 jsonschema==2.6.0
 kombu==4.2.1
-Mako==1.0.7
+Mako==1.2.2
 MarkupSafe==1.0
 meld3==1.0.2
 numpy==1.15.2
